@@ -1,0 +1,33 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ResumeTimeReportComponent } from 'app/components/time-report/pages/resume-time-report/resume-time-report.component';
+import { PerformanceUserComponent } from 'app/components/users/pages/performance-user/performance-user.component';
+
+const routes: Routes = [
+
+  // auditor/time-report
+  {
+    path: '',
+    redirectTo: 'time-report',
+    pathMatch: 'full'
+  },
+
+  // auditor/time-report
+  {
+    path: 'time-report',
+    component: ResumeTimeReportComponent
+  },
+
+  // auditor/performance
+  {
+    path: 'performance',
+    component: PerformanceUserComponent
+  },
+
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class AuditorRoutingModule { }

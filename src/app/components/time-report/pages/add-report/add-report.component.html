@@ -1,0 +1,73 @@
+<div class="container mt-2 text-center">
+    <h2 mat-dialog-title>{{titulo}}</h2>
+
+    <div mat-dialog-content>
+
+        <div class="row">
+            <div class="col-12">
+
+                <!-- Actividad -->
+                <mat-form-field appearance="fill" class="inputs">
+                    <mat-label>Seleccionar Actividad</mat-label>
+                    <mat-select [(ngModel)]="data.activity">
+                        <mat-option *ngFor="let activity of activities" [value]="activity.id" style="font-size: 10px;">
+                            {{ activity.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-6">
+                <!-- Fecha -->
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>Seleccionar Fecha</mat-label>
+                    <!-- FIXME: Agregar fecha mínima, posteriormente -->
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="data.date" [max]="today">
+                    <mat-datepicker-toggle matSuffix [for]="picker">
+                        <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div class="col-6">
+
+                <!-- Número de horas -->
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>Horas empleadas en la actividad</mat-label>
+                    <input [(ngModel)]="data.hours" type="number" min="0" max="24" matInput
+                        placeholder="Número de horas empleadas">
+                </mat-form-field>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+
+                <!-- Detalle -->
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>Detalle</mat-label>
+                    <textarea [(ngModel)]="data.detail" matInput placeholder="Ingresa el detalle de la actividad..."
+                        rows="5"></textarea>
+                </mat-form-field>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <div mat-dialog-actions class="justify-content-center">
+
+        <button mat-raised-button color="warn" cdkFocusInitial (click)="onNoClick()"
+            class="btn btn-danger">Cancelar</button>
+        <button mat-raised-button color="success" [mat-dialog-close]="data" cdkFocusInitial
+            class="btn btn-primary">Guardar</button>
+
+    </div>
+</div>

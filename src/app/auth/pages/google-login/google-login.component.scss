@@ -1,0 +1,21 @@
+.divider:after,
+.divider:before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+.h-custom {
+  height: calc(100% - 73px);
+}
+@media (max-width: 450px) {
+  .h-custom {
+    height: 100%;
+  }
+}
+
+.box-card {
+    -webkit-box-shadow: 9px 9px 35px -7px rgba(0,0,0,0.75);
+    -moz-box-shadow: 9px 9px 35px -7px rgba(0,0,0,0.75);
+    box-shadow: 9px 9px 35px -7px rgba(0,0,0,0.75);
+}

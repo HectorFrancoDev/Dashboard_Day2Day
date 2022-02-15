@@ -1,0 +1,61 @@
+<div class="container mt-2 text-center">
+    <h1 mat-dialog-title>Agregar Usuario</h1>
+    <div mat-dialog-content>
+
+
+        <div class="row">
+            <div class="col-12">
+                <!-- Email -->
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>Correo:</mat-label>
+                    <input type="email" matInput placeholder="Ingrese el correo corporativo" [(ngModel)]="data.email"
+                        required>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-6">
+
+                <!-- Country -->
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>País</mat-label>
+                    <select matNativeControl required [(ngModel)]="data.country">
+                        <option value="CO">Colombia</option>
+                        <option value="HN">Honduras</option>
+                        <option value="CR">Costa Rica</option>
+                        <option value="SV">El Salvador</option>
+                        <option value="PA">Panamá</option>
+                        <option value="CAM">CAM</option>
+                    </select>
+                </mat-form-field>
+
+            </div>
+
+
+            <div class="col-6">
+
+                <!-- Profile -->
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>Perfil del usuario</mat-label>
+                    <select matNativeControl required [(ngModel)]="data.rol">
+                        <option value="DIRECTOR_ROLE">Director</option>
+                        <option value="LEADER_ROLE">Líder Colombia</option>
+                        <option value="LEADER_ROLE">Líder CAM</option>
+                        <option value="SUPERVISOR_ROLE">Supervisor</option>
+                        <option value="AUDITOR_ROLE">Auditor</option>
+                    </select>
+                </mat-form-field>
+
+            </div>
+        </div>
+
+
+    </div>
+    <div mat-dialog-actions class="justify-content-center">
+        <button mat-button (click)="onNoClick()">Cancelar</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>Guardar</button>
+
+    </div>
+</div>

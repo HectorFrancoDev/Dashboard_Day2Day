@@ -1,0 +1,115 @@
+table {
+    width: 100%;
+  }
+  
+  .header-align-right{
+    display: flex;
+    padding: 21px 0;
+    justify-content: flex-end;
+  }
+  
+  .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+  
+//   td, th {
+//     width: 25%;
+//   }
+  
+  .full-width-table {
+      width: 100%;
+    }
+    
+    .fa{
+      font-size: large;
+    transition: .2s ease;
+    cursor: pointer;
+    -moz-transition: 1.5s ease; /* Firefox */
+    -webkit-transition: .5s ease; /* Chrome - Safari */
+    -o-transition: 1.5s ease; /* Opera */
+  
+  }
+    .fa:hover{
+      transform : scale(2);
+      -moz-transform : scale(2); /* Firefox */
+      -webkit-transform : scale(2); /* Chrome - Safari */
+      -o-transform : scale(2); /* Opera */
+      -ms-transform : scale(2); /* IE9 */
+    }
+    
+    .mat-form-field {
+      font-size: 14px;
+      width: 100%;
+    }
+    
+    .mw-80
+    {
+      max-width: 80%;
+    }
+  
+  
+  
+  .bold-text
+  {
+    font-weight: bold;
+  }
+  
+  .filtro {
+    width: 100%;
+  }
+  
+  .boton {
+    width: 100%;
+  }
+  
+  .fab-icono {
+    margin-right: 5px;
+  }
+  
+  .w-100
+  {
+    width: 100%;
+  }
+  
+  .mat-column-userimage {
+    word-wrap: break-word !important;
+    white-space: unset !important;
+    flex: 0 0 15% !important;
+    width: 15% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  
+    word-break: break-word;
+  
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+  
+  .mat-column-Actions {
+    word-wrap: break-word !important;
+    white-space: unset !important;
+    flex: 0 0 3% !important;
+    width: 3% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  
+    word-break: break-word;
+  
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+
+
+  .example-section {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 60px;
+  }
+  
+  

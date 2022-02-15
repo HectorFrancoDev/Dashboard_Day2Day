@@ -1,0 +1,88 @@
+<div class="container mt-2 text-center">
+    <h1 mat-dialog-title>Agregar Actividad General</h1>
+    <div mat-dialog-content>
+        <p>Registrar una actividad que todos los usuarios tendrán en el project plan:</p>
+        <!-- <div class="row justify-content-center"> -->
+
+        <div class="row">
+            <div class="col-6">
+                <!-- Nombre -->
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>Actividad</mat-label>
+                    <input matInput placeholder="Ingrese el nombre de la actividad que desea registrar"
+                        [(ngModel)]="data.name">
+                </mat-form-field>
+
+            </div>
+            <div class="col-6">
+
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>Empresa</mat-label>
+                    <select matNativeControl required [(ngModel)]="data.country">
+                        <option value=1>Colombia</option>
+                        <option value=2>Honduras</option>
+                        <option value=3>Costa Rica</option>
+                        <option value=4>El Salvador</option>
+                        <option value=5>Panamá</option>
+                    </select>
+                </mat-form-field>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <!-- Número de horas -->
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>Horas Estimadas</mat-label>
+                    <input [(ngModel)]="data.estimated_hours" type="number" min="0" matInput
+                        placeholder="Número de horas estimadas para la finalización!">
+                </mat-form-field>
+
+            </div>
+            <div class="col-6">
+
+                <mat-form-field class="inputs" appearance="fill">
+                    <mat-label>País</mat-label>
+                    <select matNativeControl required [(ngModel)]="data.country">
+                        <option value="CO">Colombia</option>
+                        <option value="HN">Honduras</option>
+                        <option value="CR">Costa Rica</option>
+                        <option value="SV">El Salvador</option>
+                        <option value="PA">Panamá</option>
+                    </select>
+                </mat-form-field>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+
+                <!-- Fechas estimadas -->
+                <mat-form-field appearance="fill" class="filtro" style="width: 100%;">
+                    <mat-label>Seleccione fecha inicial y final</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate [(ngModel)]="data.initial_date" placeholder="Start date">
+                        <input matEndDate [(ngModel)]="data.end_date" placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+
+                    <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date
+                    </mat-error>
+                    <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+                </mat-form-field>
+
+            </div>
+        </div>
+
+        <!-- </div> -->
+    </div>
+    <div mat-dialog-actions class="justify-content-center">
+        <button mat-button (click)="onNoClick()">Cancelar</button>
+        <!-- <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Guardar</button> -->
+        <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>Guardar</button>
+
+    </div>
+</div>
