@@ -3,25 +3,32 @@ import { RouterModule, Routes } from '@angular/router';
 import { AsignActivityUserComponent } from 'app/components/users/pages/asign-activity-user/asign-activity-user.component';
 import { ListUsersComponent } from 'app/components/users/pages/list-users/list-users.component';
 import { PerformanceUserComponent } from 'app/components/users/pages/performance-user/performance-user.component';
+import { UserProfileComponent } from 'app/user-profile/user-profile.component';
 
 const routes: Routes = [
 
-  // vicepresident/users
+  // {{cargo}}/users
   {
     path: '',
     component: ListUsersComponent
   },
 
-  // vicepresident/users/:id
+  // {{cargo}}/users/:id
   {
     path: ':id',
     component: AsignActivityUserComponent
   },
 
-  // vicepresident/users/performance/:id
+  // {{cargo}}/users/performance/:id
   {
     path: 'performance/:id',
     component: PerformanceUserComponent
+  },
+
+  // {{cargo}}/users/profile/:id
+  {
+    path: 'profile/:id',
+    component: UserProfileComponent
   }
 ];
 

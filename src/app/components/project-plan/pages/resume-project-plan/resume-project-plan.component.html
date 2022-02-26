@@ -2,12 +2,26 @@
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-xl-6 col-md-12">
                 <mat-form-field appearance="standard">
                     <mat-label>Buscar actividad...</mat-label>
                     <input matInput (keyup)="applyFilter($event)" placeholder="Buscar una actividad en las tablas"
                         #input>
                 </mat-form-field>
+            </div>
+            <div class="col-xl-6 col-md-12">
+
+                <div class="card">
+
+                    <mat-form-field appearance="fill" class="inputs">
+                        <mat-label>Empresa</mat-label>
+                        <mat-select (selectionChange)="selectCompany($event)">
+                            <mat-option value="all">Todo</mat-option>
+                            <mat-option *ngFor="let company of companies" [value]="company">{{ company }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                </div>
             </div>
         </div>
 
@@ -19,7 +33,7 @@
 
             <div class="col-6 d-flex flex-row-reverse" *ngIf="poseePermisos">
                 <button class="btn btn-round" (click)="addSpecific()" style="background-color: #e2982f;">
-                    Agregar actividad general
+                    Agregar actividad específica
                 </button>
             </div>
         </div>
@@ -38,43 +52,44 @@
 
                             <table mat-table [dataSource]="specificActivitiesSource" matSort>
 
-                                <ng-container matColumnDef="name">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-userimage">
-                                        Actividad
-                                    </th>
-                                    <td mat-cell *matCellDef="let row" class="mat-column-userimage">
-                                        {{row.name | slice:0:30}}
+                                <ng-container matColumnDef="pais">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                                    <td mat-cell *matCellDef="let row">
+                                        <img md-fab-image class="user-fab" [src]="row.company.country.img">
                                     </td>
                                 </ng-container>
 
-                                <ng-container matColumnDef="inicio-date">
+                                <ng-container matColumnDef="empresa">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="">
+                                        Empresa
+                                    </th>
+                                    <td mat-cell *matCellDef="let row" class="">
+                                        {{row.company.name }}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="">
+                                        Actividad
+                                    </th>
+                                    <td mat-cell *matCellDef="let row" class="">
+                                        {{row.name | slice:0:40}}
+                                    </td>
+                                </ng-container>
+
+                                <!-- <ng-container matColumnDef="inicio-date">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Inicio </th>
                                     <td mat-cell *matCellDef="let row">
                                         {{row.initial_date | date:"dd/MM/yyyy"}}
                                     </td>
-                                </ng-container>
+                                </ng-container> -->
 
-                                <ng-container matColumnDef="fin-date">
+                                <!-- <ng-container matColumnDef="fin-date">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Fin </th>
                                     <td mat-cell *matCellDef="let row">
                                         {{row.end_date | date:"dd/MM/yyyy"}}
                                     </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="pais">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> País </th>
-                                    <td mat-cell *matCellDef="let row">
-
-                                        <img md-fab-image class="user-fab" [src]="
-                              row.country == 'PA' ? countries[0].image  
-                              : row.country == 'SV' ? countries[1].image  
-                              : row.country == 'HN' ? countries[2].image 
-                              : row.country == 'CR' ? countries[3].image 
-                              : countries[4].image">
-
-                                    </td>
-                                </ng-container>
-
+                                </ng-container> -->
 
                                 <ng-container matColumnDef="porcentaje-avance">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Avance </th>
@@ -90,9 +105,11 @@
 
                                     <td mat-cell *matCellDef="let row" class="">
 
-                                        <button mat-mini-fab color="primary" class="bd-highlight"
-                                            (click)="showActivity(row.id)">
-                                            <mat-icon>remove_red_eye</mat-icon>
+
+                                        <button mat-raised-button type="button" matTooltip="Ver actividad"
+                                            (click)="showActivity(row.id)" [matTooltipPosition]="'above'"
+                                            class="btn btn-primary btn-link btn-sm btn-just-icon">
+                                            <i class="material-icons">remove_red_eye</i>
                                         </button>
 
                                     </td>

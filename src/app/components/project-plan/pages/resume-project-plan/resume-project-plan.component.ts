@@ -6,11 +6,13 @@ import { MatSort } from '@angular/material/sort';
 
 
 import { Router } from '@angular/router';
-import { Activity } from 'app/core/interfaces/Activity';
+import { Activity, SortUser } from 'app/core/interfaces/Activity';
 import { ActivityService } from '../../services/activity.service';
 import { NotificationsService } from 'app/core/services/notifications/notifications.service';
 import { AddSpecificActivityComponent } from '../add-specific-activity/add-specific-activity.component';
 import { AddGeneralActivityComponent } from '../add-general-activity/add-general-activity.component';
+
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-resume-project-plan',
@@ -19,31 +21,10 @@ import { AddGeneralActivityComponent } from '../add-general-activity/add-general
 })
 export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
-  countries = [
-    {
-      name: 'Panamá',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Flag_of_Panama.svg/200px-Flag_of_Panama.svg.png'
-    },
-    {
-      name: 'El Salvador',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Flag_of_El_Salvador.svg/2560px-Flag_of_El_Salvador.svg.png'
-    },
-    {
-      name: 'Honduras',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Flag_of_Honduras.svg/800px-Flag_of_Honduras.svg.png'
-    },
-    {
-      name: 'Costa Rica',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Flag_of_Costa_Rica_%28state%29.svg/200px-Flag_of_Costa_Rica_%28state%29.svg.png'
-    },
-    {
-      name: 'Colombia',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Colombia.svg/200px-Flag_of_Colombia.svg.png'
-    }
-  ]
 
   public generalActivities: Activity[] = [];
   public specificActivities: Activity[] = [];
+  public companies: string[] = [];
 
   public userCountry = localStorage.getItem('country');
   public userRole = localStorage.getItem('role');
@@ -62,7 +43,7 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
     worked_hours: 0,
     open_state: true,
     is_general: true,
-    country: 'CO'
+    company: { code: 1, name: '', country: { code: '', name: '', img: '' } }
   };
 
   // Paginator
@@ -73,7 +54,8 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
   displayedColumnsGeneral: string[] = ['name', 'inicio-date', 'fin-date'];
   displayedColumnsSpecific: string[] =
-    ['name', 'inicio-date', 'fin-date', 'pais', 'porcentaje-avance', 'actions'];
+    // ['pais', 'name', 'inicio-date', 'fin-date', 'porcentaje-avance', 'actions'];
+    ['pais', 'empresa', 'name', 'porcentaje-avance', 'actions'];
 
   generalActivitiesSource: MatTableDataSource<Activity>;
   specificActivitiesSource: MatTableDataSource<Activity>;
@@ -125,22 +107,31 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
           this.specificActivities = activities.activities.filter((a) => !a.is_general);
 
         // Si es gerente de CAM desde Colombia
-        else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CAM') 
-          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.country !== 'CO');
+        else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CAM')
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code !== 'CO');
+
+
+        // Si es Director de conductas especiales
+        else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9') {
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === 'CO');
+          this.specificActivities = this.filterByUserAreaId(this.userArea, this.specificActivities);
+        }
 
         // Si es director de Colombia 
-        else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CO')
-          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.country === 'CO');
+        else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CO') {
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === 'CO');
+        }
 
         else if (this.userRole === 'LEADER_CAM_ROLE')
-          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.country === this.userCountry);
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === this.userCountry);
 
         // Si es jefe Normal
-        else if (this.userRole === 'LEADER_ROLE')
-          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.country === this.userCountry);
+        else if (this.userRole === 'LEADER_ROLE') {
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === this.userCountry);
+          this.specificActivities = this.filterByUserAreaId(this.userArea, this.specificActivities);
+        }
 
-
-
+        this.chargeCompanies(this.specificActivities);
 
         this.specificActivitiesSource.data = this.specificActivities;
 
@@ -217,7 +208,9 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(event: Event) {
+
     const filterValue = (event.target as HTMLInputElement).value;
+
     this.generalActivitiesSource.filter = filterValue.trim().toLowerCase();
     this.specificActivitiesSource.filter = filterValue.trim().toLowerCase();
 
@@ -226,6 +219,31 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
     if (this.specificActivitiesSource.paginator)
       this.specificActivitiesSource.paginator.firstPage();
+  }
+
+  selectCompany(event: any) {
+
+    if (event.value.toLowerCase() === 'all') {
+      // this.generalActivitiesSource = new MatTableDataSource(filterValue);
+      this.specificActivitiesSource = new MatTableDataSource(this.specificActivities);
+
+      this.specificActivitiesSource.paginator = this.paginator.toArray()[0];
+      this.specificActivitiesSource.sort = this.sort.toArray()[0];
+
+    } else {
+
+      let filterValue = _.filter(this.specificActivities, (item) => {
+
+        return item.company.name.toLowerCase() === event.value.toLowerCase().split(' - ')[1];
+      });
+
+      // this.generalActivitiesSource = new MatTableDataSource(filterValue);
+      this.specificActivitiesSource = new MatTableDataSource(filterValue);
+
+      this.specificActivitiesSource.paginator = this.paginator.toArray()[0];
+      this.specificActivitiesSource.sort = this.sort.toArray()[0];
+    }
+
   }
 
   verifyActivityData(activityData: Activity): boolean {
@@ -246,14 +264,61 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
   showActivity(idActivity: string) {
 
     if (this.userRole === 'SUPERVISOR_ROLE')
-      this.router.navigate(['/supervisor/activities/' + idActivity]);
+      this.router.navigate(['/supervisor/project-plan/activities/' + idActivity]);
 
     else if (this.userRole === 'LEADER_CAM_ROLE')
       this.router.navigate(['/leader-cam/project-plan/activities/' + idActivity]);
 
-    else
-      this.router.navigate(['/admin/activities/' + idActivity]);
+    else if (this.userRole === 'LEADER_ROLE')
+      this.router.navigate(['/leader/project-plan/activities/' + idActivity]);
 
+    else if (this.userRole === 'DIRECTOR_ROLE')
+      this.router.navigate(['/leader/project-plan/activities/' + idActivity]);
+
+    else
+      this.router.navigate(['/vicepresident/project-plan/activities/' + idActivity]);
+
+  }
+
+  private chargeCompanies(activities: Activity[]) {
+
+    let companiesTemp: string[] = [];
+
+    activities.forEach((activity: Activity) => {
+
+      let data = `${activity.company.country.name} - ${activity.company.name}`;
+
+      if (!companiesTemp.includes(data))
+        companiesTemp.push(data);
+
+      this.companies = companiesTemp.sort();
+
+    });
+  }
+
+
+  private filterByUserAreaId(area_code: string, activities: Activity[]): Activity[] {
+
+    const newActivities = [];
+
+    activities.forEach((activity: Activity) => {
+
+      activity.users.forEach((user: SortUser) => {
+
+        if (user.user.area.code.toString() === area_code)
+          if (!newActivities.includes(activity))
+            newActivities.push(activity);
+      });
+
+    });
+
+    return newActivities;
+  }
+
+
+
+  resetDataRange() {
+    console.log('Clickeado');
   }
 
 }

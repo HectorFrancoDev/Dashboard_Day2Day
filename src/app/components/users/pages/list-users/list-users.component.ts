@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { CreateUser } from 'app/core/interfaces/CreateUser';
 import { GeneralUser } from 'app/core/interfaces/GeneralUser';
 import { User } from 'app/core/interfaces/User';
 import { NotificationsService } from 'app/core/services/notifications/notifications.service';
@@ -18,18 +19,12 @@ import { CreateUserComponent } from '../create-user/create-user.component';
 })
 export class ListUsersComponent implements OnInit, AfterViewInit {
 
-  private data: User = {
-    id: 'string',
-    name: 'string',
-    email: 'string',
-    img: 'string',
-    role: { code: '', name: '' },
-    area: { code: 1, name: '', country: { code: '', name: '' } },
-    // Para los que son supervisados
-    supervised_by: ''
+  private data: GeneralUser = {
+    email: '',
+    rol: '',
   };
 
-  userImg = 'https://firebasestorage.googleapis.com/v0/b/subasta-inversa-d6e7a.appspot.com/o/User-80_icon-icons.com_57249.png?alt=media&token=283572e2-e8d3-4149-9227-8ae3b795652e';
+  userImg = 'assets/img/user_img.png';
 
   public userName: string = '';
   public userCountry = localStorage.getItem('country');
@@ -48,7 +43,7 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
 
   constructor(
     private userService: UsersService,
-    public dialog: MatDialog,
+    private dialog: MatDialog,
     private notificationService: NotificationsService,
     private router: Router
   ) {
@@ -69,10 +64,9 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
   }
 
   loadData() {
+
     this.userService.getAllUsers().subscribe(
       (users) => {
-
-        console.log(users);
 
         // Si es el vicepresidente
         if (this.userRole === 'VP_ROLE')
@@ -83,49 +77,50 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
           this.usersData = users.users.filter((u) => u.area.country.code !== 'CO' && u.role.code !== 'DIRECTOR_ROLE');
 
         // Si es director de Conductas especiales 
-        else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9') //TODO: 
+        else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9')
           this.usersData = users.users.filter((u) => u.area.code === 9 && u.role.code !== 'DIRECTOR_ROLE');
 
         // Si es director de Colombia
         else if (this.userRole === 'DIRECTOR_ROLE')
-          this.usersData = users.users.filter((u) =>
-            u.area.country.code === 'CO' &&
-            u.area.code !== 9 &&
-            u.role.code !== 'VP_ROLE' &&
+          this.usersData = users.users.filter((u) => u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'VP_ROLE' &&
             u.role.code !== 'DIRECTOR_ROLE');
+
+        else if (this.userRole === 'LEADER_ROLE' && this.userArea === '1') {
+          let tempUsersData = users.users.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+          let tempUsersData2 = users.users.filter((u) => u.area.code === 11);
+          this.usersData = tempUsersData.concat(tempUsersData2);
+        }
+
+        else if (this.userRole === 'LEADER_ROLE' && this.userArea === '2') {
+          let tempUsersData = users.users.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+          let tempUsersData2 = users.users.filter((u) => u.area.code === 3);
+          this.usersData = tempUsersData.concat(tempUsersData2);
+        }
 
         // Si es jefe de Colombia
         else if (this.userRole === 'LEADER_ROLE')
-          this.usersData = users.users.filter((u) => u.area.code.toString() === this.userArea);
+          this.usersData = users.users.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
 
         // Si es jefe de CAM
         else if (this.userRole === 'LEADER_CAM_ROLE')
-          this.usersData = users.users.filter((u) => u.area.code.toString() === this.userArea);
-
+          this.usersData = users.users.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
 
         // Si es supervisor con equipo fijo
         else if (this.userRole === 'SUPERVISOR_ROLE') {
 
-
-          this.usersData = users.users.filter((u) => u.supervised_by === this.userId);
-
-          console.log('105', this.usersData.length);
-          // Si es supervisor normal
-          if (this.usersData.length === 0)
-            this.usersData = users.users.filter((u) =>
-              u.area.code.toString() === this.userArea &&
-              u.role.code !== 'LEADER_ROLE' && u.role.code !== 'SUPERVISOR_ROLE');
-
+          this.usersData = users.users.filter((u) =>
+            u.area.code.toString() === this.userArea && u.role.code !== 'LEADER_ROLE' && u.role.code !== 'SUPERVISOR_ROLE' &&
+            u.role.code !== 'LEADER_CAM_ROLE' && u.role.code !== 'VP_ROLE'
+          );
         }
 
-
         else
-          console.log('No es posible filtrar a los usuarios')
+          this.notificationService.showNotificationError('No es posible filtrar a los usuarios')
 
         this.dataSource.data = this.usersData;
       },
       (error) => {
-        console.log("Error obteniendo usuarios del backend");
+        this.notificationService.showNotificationError("Error obteniendo usuarios de la BD");
         console.log(error);
       }
     );
@@ -151,21 +146,25 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
         const checkData = this.verifyUserData(result);
 
         if (checkData) {
-          const user = result as GeneralUser;
+          const user = result as CreateUser;
 
           user.email = user.email.trim().toLowerCase();
+          user.roleCode = result.rol.value;
+          user.areaCode = result.area.code;
 
           this.userService.createUser(user).subscribe(
 
             () => {
-              this.notificationService.showNotificationError('Usuario creado con éxito');
+              this.notificationService.showNotificationSuccess('Usuario creado con éxito');
               this.loadData();
             },
             (error) => this.notificationService.showNotificationError(error.error.error)
           );
+
+
         }
         else {
-          this.notificationService.showNotificationError('Información Inválida o faltante');
+          this.notificationService.showNotificationError('Información inválida o faltante');
         }
       }
     });
@@ -173,12 +172,12 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
 
   verifyUserData(userData: GeneralUser): boolean {
 
-
-    if (userData.email && userData.country && userData.rol)
+    if (userData.email && userData.rol.value && userData.area.code)
       if (userData.email.toLowerCase().includes('@davivienda'))
         return true;
 
     return false;
+
   }
 
   showUser(id: string) {
@@ -202,19 +201,20 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
   }
 
   showUserPerformance(id: string) {
+
     if (this.userRole === 'DIRECTOR_ROLE')
-      this.router.navigate(['/director/users/performance' + id]);
+      this.router.navigate(['/director/users/performance/' + id]);
 
     else if (this.userRole === 'LEADER_ROLE')
-      this.router.navigate(['/leader/users/performance' + id]);
+      this.router.navigate(['/leader/users/performance/' + id]);
 
     else if (this.userRole === 'LEADER_CAM_ROLE')
-      this.router.navigate(['/leader-cam/users/performance' + id]);
+      this.router.navigate(['/leader-cam/users/performance/' + id]);
 
     else if (this.userRole === 'SUPERVISOR_ROLE')
-      this.router.navigate(['/supervisor/users/performance' + id]);
+      this.router.navigate(['/supervisor/users/performance/' + id]);
 
     else
-      this.router.navigate(['/vicepresident/users/performance' + id]);
+      this.router.navigate(['/vicepresident/users/performance/' + id]);
   }
 }

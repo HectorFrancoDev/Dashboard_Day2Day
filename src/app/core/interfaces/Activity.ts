@@ -1,8 +1,9 @@
-// import { Country } from "src/app/core/interfaces/User";
+import { Area } from "./Area";
+import { Company } from "./Company";
 
 export interface Activity {
     id?: string;
-    company?: 1
+    company: Company
     name: string;
     open_state: boolean;
     initial_date: Date;
@@ -10,9 +11,8 @@ export interface Activity {
     estimated_hours: number;
     worked_hours: number;
     is_general: boolean;
-    country: string
     users?: [SortUser];
-    state?: boolean,
+    state?: boolean
 }
 
 
@@ -20,6 +20,8 @@ export interface SortUser {
     user: {
         _id: string;
         name: string;
+        img: string;
+        area: Area
     };
 
     logs: [

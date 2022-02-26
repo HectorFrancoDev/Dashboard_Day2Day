@@ -38,9 +38,7 @@
                     <p class="card-category">Son todos los usuarios que son supervisados por ti</p>
                 </div>
 
-
                 <div class="card-body">
-
 
                     <table mat-table [dataSource]="dataSource" matSort>
 
@@ -92,9 +90,17 @@
 
                             <td mat-cell *matCellDef="let row">
 
-                                <button mat-mini-fab color="primary" class="bd-highlight fab-icono" (click)="showUser(row.id)" *ngIf="poseePermisos">
+                                <!-- <button mat-mini-fab color="primary" class="bd-highlight fab-icono"
+                                    (click)="showUser(row.id)" *ngIf="poseePermisos">
                                     <mat-icon>playlist_add</mat-icon>
+                                </button> -->
+
+                                <button mat-raised-button type="button" matTooltip="Asignar actividad"
+                                    (click)="showUser(row.id)" *ngIf="poseePermisos" [matTooltipPosition]="'above'"
+                                    class="btn btn-success btn-link btn-sm btn-just-icon">
+                                    <i class="material-icons">playlist_add</i>
                                 </button>
+
                             </td>
 
                         </ng-container>
@@ -105,8 +111,15 @@
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Acciones</th>
 
                             <td mat-cell *matCellDef="let row">
-                                <button mat-mini-fab class="fab-icono" (click)="showUserPerformance(row.id)" style="background-color: #e2982f;">
+                                <!-- <button mat-mini-fab class="fab-icono" (click)="showUserPerformance(row.id)"
+                                    style="background-color: #e2982f;">
                                     <mat-icon>signal_cellular_alt</mat-icon>
+                                </button> -->
+
+                                <button mat-raised-button type="button" matTooltip="Ver reporte"
+                                    (click)="showUserPerformance(row.id)" [matTooltipPosition]="'above'"
+                                    class="btn btn-warning btn-link btn-sm btn-just-icon">
+                                    <i class="material-icons">signal_cellular_alt</i>
                                 </button>
                             </td>
 

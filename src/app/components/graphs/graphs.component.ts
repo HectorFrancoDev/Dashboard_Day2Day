@@ -1,22 +1,38 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ResponseTimeData } from 'app/core/interfaces/ResponseTimeData';
 import { RangeTime } from 'app/core/interfaces/TimeRange';
 import { NotificationsService } from 'app/core/services/notifications/notifications.service';
 import { TimeReportService } from '../time-report/services/time-report/time-report.service';
-import * as Chartist from 'chartist';
+// import * as Chartist from 'chartist';
 import * as moment from 'moment';
 
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { TimeData } from 'app/core/interfaces/TimeData';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-graphs',
   templateUrl: './graphs.component.html',
   styleUrls: ['./graphs.component.scss']
 })
-export class GraphsComponent implements OnInit {
+export class GraphsComponent implements OnInit, AfterViewInit {
+
+
+  
+
+  // 30 colores para las gráficas
+  paletaDeColores: string[] = [
+    '#21886B', '#0080C0', '#A78859', '#F5D57F', '#CA1177',
+    '#7D2B8B', '#7799CF', '#9999FF', '#5E55A0', '#BA4C2E',
+    '#82888F', '#CC222B', '#CB1862', '#CA0088', '#57376C',
+    '#FF3366', '#D47FFF', '#33348E', '#1B467F', '#00DF00',
+    '#33FFCC', '#0033FF', '#E2982F', '#00ACEC', '#699B69',
+    '#8ABE6B', '#BBD147', '#D9E021', '#FCEE21', '#00ABD2',
+  ];
 
 
   @Input()
@@ -37,212 +53,158 @@ export class GraphsComponent implements OnInit {
   horasTrabajadasEnTotal = 0;
   horasTrabajadasEnPromedio = 0;
 
+  // Line Chart data
   labelsLineChart: string[] = [];
   dataLineChart: number[] = [];
+
+  // Pie Chart data (Activities)
+  labelsPieChart: string[] = [];
+  dataPieChart: number[] = [];
+  
+  // Pie Chart data (Companies)
+  labelsPieChartCompanies: string[] = [];
+  dataPieChartCompanies: number[] = [];
+
+  // backgroundPieColors: string[] = [];
+
+
+  private timeData: TimeData[] = [];
+
+  // Tabla de detalle
+  displayedColumns: string[] = ['date', 'activity', 'hours', 'detail'];
+  dataSource: MatTableDataSource<TimeData>;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private notificationService: NotificationsService,
     private reportService: TimeReportService
-  ) { }
+  ) {
+    this.dataSource = new MatTableDataSource(this.timeData);
+  }
 
+  // Line Chart (HORAS)
+  public lineChartType: ChartType = 'line';
 
-    // Bar graph
-    public lineChartType: ChartType = 'line';
-
-    public lineChartOptions: ChartConfiguration['options'] = {
-      responsive: true,
-      backgroundColor: '#0080c0',
-      borderColor: '#005d8c',
-      // We use these empty structures as placeholders for dynamic theming.
-      scales: {
-        x: {},
-        y: {
-          min: 0,
-          ticks: {
-            stepSize: 2,
-          }
+  public lineChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    backgroundColor: '#699b69',
+    borderColor: '#699b69',
+    // We use these empty structures as placeholders for dynamic theming.
+    scales: {
+      x: {},
+      y: {
+        min: 0,
+        ticks: {
+          stepSize: 4,
         }
       }
-    };
-  
-    public lineChartData: ChartData<'line'> = {
-      labels: [''],
-      datasets: [
-        {
-          data: [0],
-          label: 'Tendencia de trabajo diaria durante el mes en curso',
-          hoverBackgroundColor: '#005d8c',
-          pointBackgroundColor: '#cc222b',
-          pointHoverBorderColor: '#cc222b',
-          pointBorderWidth: 2,
-          pointRadius: 4,
-          tension: 0.3
-        }
-      ]
-    };
-
-  startAnimationForLineChart(chart) {
-    let seq: any, delays: any, durations: any;
-    seq = 0;
-    delays = 80;
-    durations = 500;
-
-    chart.on('draw', function (data) {
-      if (data.type === 'line' || data.type === 'area') {
-        data.element.animate({
-          d: {
-            begin: 600,
-            dur: 700,
-            from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
-            to: data.path.clone().stringify(),
-            easing: Chartist.Svg.Easing.easeOutQuint
-          }
-        });
-      } else if (data.type === 'point') {
-        seq++;
-        data.element.animate({
-          opacity: {
-            begin: seq * delays,
-            dur: durations,
-            from: 0,
-            to: 1,
-            easing: 'ease'
-          }
-        });
-      }
-    });
-
-    seq = 0;
+    }
   };
 
-  startAnimationForBarChart(chart) {
-    let seq2: any, delays2: any, durations2: any;
-
-    seq2 = 0;
-    delays2 = 80;
-    durations2 = 500;
-    chart.on('draw', function (data) {
-      if (data.type === 'bar') {
-        seq2++;
-        data.element.animate({
-          opacity: {
-            begin: seq2 * delays2,
-            dur: durations2,
-            from: 0,
-            to: 1,
-            easing: 'ease'
-          }
-        });
+  public lineChartData: ChartData<'line'> = {
+    labels: [''],
+    datasets: [
+      {
+        data: [0],
+        label: 'Horas de trabajo',
+        hoverBackgroundColor: '#005d8c',
+        pointBackgroundColor: '#cc222b',
+        pointHoverBorderColor: '#cc222b',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 10,
+        tension: 0.1
       }
-    });
-
-    seq2 = 0;
+    ]
   };
+
+  // Pie Chart (ACTIVITIES)
+  public pieChartType: ChartType = 'doughnut';
+
+  public pieChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom'
+      },
+      title: {
+        display: true,
+        text: 'Horas trabajadas por actividad'
+      }
+    }
+  };
+
+  public pieChartData: ChartData<'doughnut', number[], string | string[]> = {
+
+    labels: [''],
+    datasets: [
+      {
+        data: [0],
+        backgroundColor: this.paletaDeColores,
+        hoverBackgroundColor: this.paletaDeColores,
+        borderWidth: 0
+      }
+    ]
+  };
+
+
+  // Pie Chart (COMAPNIES)
+  public pieChartCompaniesType: ChartType = 'doughnut';
+
+  public pieChartCompaniesOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom'
+      },
+      title: {
+        display: true,
+        text: 'Horas trabajadas por empresa'
+      }
+    }
+  };
+
+  public pieChartCompaniesData: ChartData<'doughnut', number[], string | string[]> = {
+
+    labels: [''],
+    datasets: [
+      {
+        data: [0],
+        backgroundColor: this.paletaDeColores,
+        hoverBackgroundColor: this.paletaDeColores,
+        borderWidth: 0
+      }
+    ]
+  };
+
+
 
   ngOnInit() {
-    /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
-
-    const dataDailySalesChart: any = {
-      labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-      series: [
-        [3, 6, 8, 8, 8, 10, 8, 12, 16],
-      ]
-    };
-
-    const optionsDailySalesChart: any = {
-      lineSmooth: Chartist.Interpolation.cardinal({ tension: 0.5 }),
-      axisY: {
-        type: Chartist.FixedScaleAxis,
-        ticks: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
-        low: 0,
-        hight: 14
-      },
-      low: 0,
-      high: 20, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-      chartPadding: { top: 0, right: 0, bottom: 0, left: 0 },
-    }
-
-    var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
-
-    this.startAnimationForLineChart(dailySalesChart);
-
-
-    /* ----------==========     Completed Tasks Chart initialization    ==========---------- */
-
-    const dataCompletedTasksChart: any = {
-      labels: ['12p', '3p', '6p', '9p', '12p', '3a', '6a', '9a'],
-      series: [
-        [230, 750, 450, 300, 280, 240, 200, 190]
-      ]
-    };
-
-    const optionsCompletedTasksChart: any = {
-      lineSmooth: Chartist.Interpolation.cardinal({
-        tension: 0
-      }),
-      low: 0,
-      high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-      chartPadding: { top: 0, right: 0, bottom: 0, left: 0 }
-    }
-
-    var completedTasksChart = new Chartist.Line('#completedTasksChart', dataCompletedTasksChart, optionsCompletedTasksChart);
-
-    // start animation for the Completed Tasks Chart - Line Chart
-    this.startAnimationForLineChart(completedTasksChart);
-
-
-
-    /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
-
-    var datawebsiteViewsChart = {
-      labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-      series: [
-        [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
-
-      ]
-    };
-    var optionswebsiteViewsChart = {
-      axisX: {
-        showGrid: false
-      },
-      low: 0,
-      high: 1000,
-      chartPadding: { top: 0, right: 5, bottom: 0, left: 0 }
-    };
-    var responsiveOptions: any[] = [
-      ['screen and (max-width: 640px)', {
-        seriesBarDistance: 5,
-        axisX: {
-          labelInterpolationFnc: function (value) {
-            return value[0];
-          }
-        }
-      }]
-    ];
-    var websiteViewsChart = new Chartist.Bar('#websiteViewsChart', datawebsiteViewsChart, optionswebsiteViewsChart, responsiveOptions);
-
-    //start animation for the Emails Subscription Chart
-    this.startAnimationForBarChart(websiteViewsChart);
-
 
     this.getUsersReports(this.idUser);
     setTimeout(() => this.mostrar = true, 1000);
 
   }
 
-
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
 
   getUsersReports(id: string) {
 
-    let currentDate = new Date();
-    let currentMonth = currentDate.getMonth();
-    let currentYear = currentDate.getFullYear();
-
     const rangeTime: RangeTime = {
-      start: new Date(currentYear, currentMonth, 1),
+      start: this.getMonday(new Date),
       end: moment(new Date()).add(1, 'days').toDate()
     };
 
+    this.range = new FormGroup({
+      start: new FormControl(rangeTime.start, Validators.required),
+      end: new FormControl(new Date(), Validators.required),
+    });
 
     this.reportService.getAllTimeData(rangeTime, id)
       .subscribe((reports: ResponseTimeData) => {
@@ -252,19 +214,20 @@ export class GraphsComponent implements OnInit {
           new Date(b.date).getTime() - new Date(a.date).getTime()
         );
 
-        // this.fillDetailTable(reportes);
+        this.fillDetailTable(reportes);
         // Generar el Pie Chart
-        // this.generatePieChart(reportes);
+        this.generatePieChart(reportes);
+        // Generar el Pie Chart
+        this.generatePieChartCompanies(reportes);
         // Generar el Bar Chart
-        this.generateBarChart(reportes);
+        this.generateLineChart(reportes);
 
       },
         (error) => console.log(error)
       );
   }
-  
-  
-  private generateBarChart(reports: TimeData[]) {
+
+  private generateLineChart(reports: TimeData[]) {
 
     reports.forEach((report: TimeData) => {
 
@@ -291,6 +254,101 @@ export class GraphsComponent implements OnInit {
 
   }
 
+  private generatePieChart(reports: TimeData[]) {
+
+
+    reports.forEach((report: TimeData) => {
+
+      if (report.state) {
+
+        if (!this.labelsPieChart.includes(report.activity.name)) {
+          this.labelsPieChart.push(report.activity.name);
+          this.dataPieChart.push(report.hours);
+        } else {
+          let activity = this.labelsPieChart.indexOf(report.activity.name);
+          this.dataPieChart[activity] += report.hours;
+        }
+
+      }
+
+    });
+
+    let arrayOfObj = this.labelsPieChart.map((d, i) => {
+
+      return {
+        label: d,
+        data: this.dataPieChart[i] || 0
+      };
+
+    });
+
+    let sortedArrayOfObj = arrayOfObj.sort((a, b) => b.data - a.data);
+
+    let newArrayLabel = [];
+    let newArrayData = [];
+
+    sortedArrayOfObj.forEach((d) => {
+      newArrayLabel.push(d.label);
+      newArrayData.push(d.data);
+    });
+
+
+    this.pieChartData.labels = newArrayLabel;
+    this.pieChartData.datasets[0].data = newArrayData
+
+    // this.generateBackgroundColors();
+  }
+
+  private generatePieChartCompanies(reports: TimeData[]) {
+
+    reports.forEach((report: TimeData) => {
+
+      if (report.state) {
+
+        if (!this.labelsPieChartCompanies.includes(report.activity.company.name)) {
+          this.labelsPieChartCompanies.push(report.activity.company.name);
+          this.dataPieChartCompanies.push(report.hours);
+        } else {
+          let company = this.labelsPieChartCompanies.indexOf(report.activity.company.name);
+          this.dataPieChartCompanies[company] += report.hours;
+        }
+
+      }
+
+    });
+
+    let arrayOfObj = this.labelsPieChartCompanies.map((d, i) => {
+
+      return {
+        label: d,
+        data: this.dataPieChartCompanies[i] || 0
+      };
+
+    });
+
+    let sortedArrayOfObj = arrayOfObj.sort((a, b) => b.data - a.data);
+
+    let newArrayLabel = [];
+    let newArrayData = [];
+
+    sortedArrayOfObj.forEach((d) => {
+      newArrayLabel.push(d.label);
+      newArrayData.push(d.data);
+    });
+
+
+    this.pieChartCompaniesData.labels = newArrayLabel;
+    this.pieChartCompaniesData.datasets[0].data = newArrayData
+
+    // this.generateBackgroundColors();
+  }
+
+  private fillDetailTable(responseTimeData: TimeData[]) {
+    this.timeData = responseTimeData;
+    this.dataSource.data = this.timeData;
+    console.log(this.dataSource.data);
+  }
+
   public filterReport() {
 
 
@@ -310,24 +368,29 @@ export class GraphsComponent implements OnInit {
             new Date(b.date).getTime() - new Date(a.date).getTime()
           );
 
-          // this.labelsChart = [];
-          // this.dataChart = [];
-          // this.backgroundColors = [];
+          this.horasTrabajadasEnTotal = 0;
+          this.horasTrabajadasEnPromedio = 0;
+
+          this.labelsPieChart = [];
+          this.dataPieChart = [];
+
+          this.labelsPieChartCompanies = [];
+          this.dataPieChartCompanies = [];
 
           this.labelsLineChart = [];
           this.dataLineChart = [];
 
-          this.horasTrabajadasEnTotal = 0;
-
-
           // Llenar tabla de detalle
-          // this.fillDetailTable(reportes); 
+          this.fillDetailTable(reportes);
 
           // Generar el Pie Chart
-          // this.generatePieChart(reportes);
+          this.generatePieChart(reportes);
+
+          // Generar el Pie Chart
+          this.generatePieChartCompanies(reportes);
 
           // Generar el Bar Chart
-          this.generateBarChart(reportes);
+          this.generateLineChart(reportes);
 
           this.mostrar = true;
 
@@ -337,6 +400,33 @@ export class GraphsComponent implements OnInit {
     }
 
 
+  }
+
+
+  getMonday(currentDate: Date) {
+    // Día de la semana (0, 6)
+    let day = currentDate.getDay();
+    // Obtiene el día lunes de la semana en curso en número
+    let diff = currentDate.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+    // Retorna el día lunes en formato fecha
+    return new Date(currentDate.setDate(diff));
+  }
+
+  resetDataRange() {
+    this.mostrar = false;
+
+    this.horasTrabajadasEnTotal = 0;
+    this.horasTrabajadasEnPromedio = 0;
+
+    this.labelsPieChart = [];
+    this.dataPieChart = [];
+
+    this.labelsLineChart = [];
+    this.dataLineChart = [];
+
+
+    this.getUsersReports(this.idUser);
+    setTimeout(() => this.mostrar = true, 1000);
   }
 
 }

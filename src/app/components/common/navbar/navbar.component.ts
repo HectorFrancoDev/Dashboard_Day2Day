@@ -166,6 +166,14 @@ export class NavbarComponent implements OnInit {
     }
 
 
+    showMiProfile() {
+        let getCargo = this.router.url.split('/');
+
+        console.log(getCargo);
+        this.router.navigate([`${getCargo[1]}/profile`]);
+        console.log('show profile');
+    }
+
     logout() {
         this.authService.logout();
         this.socialAuthService.signOut();

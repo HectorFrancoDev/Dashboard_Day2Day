@@ -21,7 +21,7 @@ import { ProgressBarMode } from '@angular/material/progress-bar';
 
 export interface ProgressBar {
   color: ThemePalette;
-  mode: ProgressBarMode; 
+  mode: ProgressBarMode;
   value: number;
   bufferValue: number
 }
@@ -48,7 +48,32 @@ export class ResumeTimeReportComponent implements OnInit {
 
   private data: TimeData = {
     date: new Date(),
-    activity: { _id: '', name: '' },
+
+    activity: {
+      id: '',
+      name: 'ABC',
+      company: { code: 1, name: '', country: { code: '', name: '', img: '' } },
+      open_state: true,
+      initial_date: new Date(),
+      end_date: new Date(),
+      estimated_hours: 1,
+      worked_hours: 1,
+      is_general: false
+    },
+
+    user: {
+      id: 'string',
+      name: 'string',
+      email: 'string',
+      img: 'string',
+      role: { code: '', name: '' },
+      area: {
+        code: 1, name: '', country: {
+          code: '', name: '', img: ''
+        }
+      }
+    },
+
     detail: '',
     hours: 0,
     current_hours: 0,
@@ -107,9 +132,20 @@ export class ResumeTimeReportComponent implements OnInit {
 
   loadData() {
 
+    const rangeTime: RangeTime = {
+      start: this.getMonday(new Date),
+      // start: new Date(),
+      end: moment(new Date()).add(1, 'days').toDate()
+    };
+
+    this.range = new FormGroup({
+      start: new FormControl(rangeTime.start, Validators.required),
+      end: new FormControl(new Date(), Validators.required),
+    });
+
     this.horasTrabajadasHoy = 0;
 
-    this.userTimeReportService.getAllTimeData().subscribe(
+    this.userTimeReportService.getAllTimeData(rangeTime).subscribe(
       (responseTimeData) => {
         this.timeData = responseTimeData.reports;
 
@@ -133,7 +169,7 @@ export class ResumeTimeReportComponent implements OnInit {
           this.progressBar.color = 'warn';
         else if (this.progressBar.value <= 67)
           this.progressBar.color = 'accent'
-        else 
+        else
           this.progressBar.color = 'primary';
 
       },
@@ -173,7 +209,6 @@ export class ResumeTimeReportComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
 
-
         const checkData = this.verifyTimeData(result);
         if (checkData) {
           // Si se desea agregar uno nuevo
@@ -182,19 +217,10 @@ export class ResumeTimeReportComponent implements OnInit {
             this.userTimeReportService.createTimeData(result).subscribe(
               () => {
                 this.notificationService.showNotificationSuccess('Registro creado correctamente!');
+                this.resetData();
                 this.loadData();
-                this.data = {
-                  date: new Date(),
-                  activity: { _id: '', name: '' },
-                  detail: '',
-                  hours: 0,
-                  current_hours: 0,
-                  edit: false
-                };
               },
-              () => {
-                this.notificationService.showNotificationError('No fue posible crear el registro, revisa los datos ingresados');
-              }
+              (error) => this.notificationService.showNotificationError('No fue posible crear el registro, revisa los datos ingresados'),
             );
           }
 
@@ -204,16 +230,8 @@ export class ResumeTimeReportComponent implements OnInit {
             this.userTimeReportService.editTimeData(timeData).subscribe(
               () => {
                 this.notificationService.showNotificationSuccess('Registro editado correctamente!');
+                this.resetData();
                 this.loadData();
-
-                this.data = {
-                  date: new Date(),
-                  activity: { _id: '', name: '' },
-                  detail: '',
-                  hours: 0,
-                  current_hours: 0,
-                  edit: false
-                };
               },
               () => {
                 this.notificationService.showNotificationError('No fue posible editar el resgistro!');
@@ -225,6 +243,8 @@ export class ResumeTimeReportComponent implements OnInit {
           this.notificationService.showNotificationError('Información inválida');
         }
       }
+
+      // Una vez se cerró el Dialog modal con o sin cambios
     });
 
 
@@ -307,8 +327,6 @@ export class ResumeTimeReportComponent implements OnInit {
       const endMoment = moment(end).add(1, 'days');
       rangeTime.end = endMoment.toDate();
 
-      console.log(rangeTime.end);
-
       this.userTimeReportService.getAllTimeData(rangeTime, '').subscribe(
         (responseTimeData) => {
 
@@ -359,5 +377,53 @@ export class ResumeTimeReportComponent implements OnInit {
       verticalPosition: 'top'
     });
   }
+
+
+  getMonday(currentDate: Date) {
+    // Día de la semana (0, 6)
+    let day = currentDate.getDay();
+    // Obtiene el día lunes de la semana en curso en número
+    let diff = currentDate.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+    // Retorna el día lunes en formato fecha
+    return new Date(currentDate.setDate(diff));
+  }
+
+
+  resetData() {
+
+    this.data = {
+      date: new Date(),
+      activity: {
+        id: '',
+        name: 'ABCDEFks',
+        company: { code: 1, name: 'ABC', country: { code: '', name: '', img: '' } },
+        open_state: true,
+        initial_date: new Date(),
+        end_date: new Date(),
+        estimated_hours: 1,
+        worked_hours: 1,
+        is_general: false
+      },
+
+      user: {
+        id: 'string',
+        name: 'string',
+        email: 'string',
+        img: 'string',
+        role: { code: '', name: '' },
+        area: {
+          code: 1, name: '', country: {
+            code: '', name: '', img: ''
+          }
+        }
+      },
+      
+      detail: '',
+      hours: 0,
+      current_hours: 0,
+      edit: false
+    };
+  }
+
 
 }

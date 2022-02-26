@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CreateUser } from 'app/core/interfaces/CreateUser';
 import { GeneralUser } from 'app/core/interfaces/GeneralUser';
 import { ResponseGetUsers } from 'app/core/interfaces/GetUsers';
 import { ResponseGetUserById } from 'app/core/interfaces/ResponseGetUserById';
@@ -20,7 +21,7 @@ export class UsersService {
     return this.http.get<ResponseGetUsers>(`${environment.API_URL}/users`);
   }
 
-  createUser(user: GeneralUser) {
+  createUser(user: CreateUser) {
     return this.http.post(`${environment.API_URL}/users`, user);
   }
 

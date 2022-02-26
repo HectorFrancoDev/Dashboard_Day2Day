@@ -1,0 +1,27 @@
+table {
+  width: 100%;
+}
+
+  
+.mat-column-userimage {
+  word-wrap: break-word !important;
+  white-space: unset !important;
+  flex: 0 0 8% !important;
+  width: 8% !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  word-break: break-word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.user-fab {
+  width: 35px; 
+  height: 35px; 
+  border-radius: 30px;
+  // margin-top: -7px;
+}

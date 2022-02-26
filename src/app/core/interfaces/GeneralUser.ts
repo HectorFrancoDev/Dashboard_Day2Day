@@ -1,6 +1,7 @@
-export interface GeneralUser {
+export interface GeneralUser
+{
     email: string;
-    state?: boolean;
-    country?: string;
-    rol?: string;
+    // area?: string
+    rol?: any,
+    area?: any
 }

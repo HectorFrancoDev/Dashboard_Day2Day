@@ -42,6 +42,22 @@ export class TimeReportService {
     return this.http.get<ResponseTimeData>(`${environment.API_URL}/reports`, httpOptions);
   }
 
+  getAllTimeReportsDashboard(rangeTime?: RangeTime): Observable<ResponseTimeData> {
+    let httpOptions = {};
+
+    if (rangeTime) {
+
+      httpOptions = {
+        params: new HttpParams()
+          .set('start', rangeTime.start.toDateString())
+          .set('end', rangeTime.end.toDateString())
+      };
+
+    }
+
+    return this.http.get<ResponseTimeData>(`${environment.API_URL}/reports/dashboard`, httpOptions);
+  }
+
   /**
    * crear un nuevo registro en el time report del usuario.
    * @param timeData 

@@ -6,14 +6,17 @@ import { ResumeProjectPlanComponent } from './pages/resume-project-plan/resume-p
 import { AddGeneralActivityComponent } from './pages/add-general-activity/add-general-activity.component';
 import { AddSpecificActivityComponent } from './pages/add-specific-activity/add-specific-activity.component';
 import { MaterialModule } from '../material/material.module';
-import { FormsModule } from '@angular/forms';
+import { ShowActivityComponent } from './pages/show-activity/show-activity.component';
+import { EditAuditorActivityComponent } from './pages/edit-auditor-activity/edit-auditor-activity.component';
 
 
 @NgModule({
   declarations: [
     ResumeProjectPlanComponent,
     AddGeneralActivityComponent,
-    AddSpecificActivityComponent
+    AddSpecificActivityComponent,
+    ShowActivityComponent,
+    EditAuditorActivityComponent
   ],
   imports: [
     CommonModule,
