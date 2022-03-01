@@ -85,12 +85,7 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
           this.usersData = users.users.filter((u) => u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'VP_ROLE' &&
             u.role.code !== 'DIRECTOR_ROLE');
 
-        else if (this.userRole === 'LEADER_ROLE' && this.userArea === '1') {
-          let tempUsersData = users.users.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
-          let tempUsersData2 = users.users.filter((u) => u.area.code === 11);
-          this.usersData = tempUsersData.concat(tempUsersData2);
-        }
-
+        // Jefe Nelson Gamba
         else if (this.userRole === 'LEADER_ROLE' && this.userArea === '2') {
           let tempUsersData = users.users.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
           let tempUsersData2 = users.users.filter((u) => u.area.code === 3);
@@ -107,7 +102,6 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
 
         // Si es supervisor con equipo fijo
         else if (this.userRole === 'SUPERVISOR_ROLE') {
-
           this.usersData = users.users.filter((u) =>
             u.area.code.toString() === this.userArea && u.role.code !== 'LEADER_ROLE' && u.role.code !== 'SUPERVISOR_ROLE' &&
             u.role.code !== 'LEADER_CAM_ROLE' && u.role.code !== 'VP_ROLE'
@@ -115,7 +109,7 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
         }
 
         else
-          this.notificationService.showNotificationError('No es posible filtrar a los usuarios')
+          this.notificationService.showNotificationError('No es posible filtrar a los usuarios');
 
         this.dataSource.data = this.usersData;
       },

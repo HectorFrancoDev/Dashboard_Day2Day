@@ -24,7 +24,8 @@ export class NavbarComponent implements OnInit {
     userImg = 'assets/img/user_img.png';
 
 
-    constructor(location: Location, private element: ElementRef, private router: Router,
+    constructor(location: Location, private element: ElementRef, 
+        private router: Router,
         private tokenService: TokenService,
         private authService: AuthService,
         private socialAuthService: SocialAuthService,

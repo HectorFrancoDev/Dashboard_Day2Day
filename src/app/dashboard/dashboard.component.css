@@ -1,0 +1,22 @@
+.loader {
+    margin-right: 10px;;
+}
+
+table {
+    width: 100%;
+}
+
+.primeraColumna {
+    width: 15%;
+}
+
+.segundaColumna {
+    width: 30%;
+}
+.terceraColumna {
+    width: 10%;
+}
+
+.cuartaColumna {
+    width: 45%;
+}

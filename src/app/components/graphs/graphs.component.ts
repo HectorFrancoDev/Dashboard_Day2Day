@@ -21,9 +21,6 @@ import { MatSort } from '@angular/material/sort';
 })
 export class GraphsComponent implements OnInit, AfterViewInit {
 
-
-  
-
   // 30 colores para las gráficas
   paletaDeColores: string[] = [
     '#21886B', '#0080C0', '#A78859', '#F5D57F', '#CA1177',
@@ -53,6 +50,7 @@ export class GraphsComponent implements OnInit, AfterViewInit {
   horasTrabajadasEnTotal = 0;
   horasTrabajadasEnPromedio = 0;
 
+
   // Line Chart data
   labelsLineChart: string[] = [];
   dataLineChart: number[] = [];
@@ -60,7 +58,7 @@ export class GraphsComponent implements OnInit, AfterViewInit {
   // Pie Chart data (Activities)
   labelsPieChart: string[] = [];
   dataPieChart: number[] = [];
-  
+
   // Pie Chart data (Companies)
   labelsPieChartCompanies: string[] = [];
   dataPieChartCompanies: number[] = [];
@@ -244,6 +242,7 @@ export class GraphsComponent implements OnInit, AfterViewInit {
         }
 
         this.horasTrabajadasEnTotal += report.hours;
+
       }
     });
 
@@ -346,7 +345,6 @@ export class GraphsComponent implements OnInit, AfterViewInit {
   private fillDetailTable(responseTimeData: TimeData[]) {
     this.timeData = responseTimeData;
     this.dataSource.data = this.timeData;
-    console.log(this.dataSource.data);
   }
 
   public filterReport() {
@@ -356,7 +354,9 @@ export class GraphsComponent implements OnInit, AfterViewInit {
     const { start, end } = rangeTime;
 
     if (start && end) {
+
       this.mostrar = false;
+      
       const endMoment = moment(end).add(1, 'days');
       rangeTime.end = endMoment.toDate();
 

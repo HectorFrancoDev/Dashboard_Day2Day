@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { SocialAuthService } from 'angularx-social-login';
+import { AuthService } from 'app/auth/services/auth/auth.service';
 import { TokenService } from 'app/auth/services/token/token.service';
 import { NotificationsService } from 'app/core/services/notifications/notifications.service';
 
@@ -14,36 +16,36 @@ declare interface RouteInfo {
 export const ROUTES: RouteInfo[] = [
 
   // Rotas qué tiene el Vicepresidente 
-  { role: 'VP_ROLE',  path: '/vicepresident/dashboard',      title: 'Resumen General',    icon: 'insights'    },
-  { role: 'VP_ROLE',  path: '/vicepresident/project-plan',   title: 'Project Plan',       icon: 'dashboard'   },
-  { role: 'VP_ROLE',  path: '/vicepresident/users',          title: 'Equipo de trabajo',  icon: 'people_alt'  },
+  { role: 'VP_ROLE', path: '/vicepresident/dashboard', title: 'Resumen General', icon: 'insights' },
+  { role: 'VP_ROLE', path: '/vicepresident/project-plan', title: 'Project Plan', icon: 'dashboard' },
+  { role: 'VP_ROLE', path: '/vicepresident/users', title: 'Equipo de trabajo', icon: 'people_alt' },
 
   // Rotas qué tienen los  Directores
-  { role: 'DIRECTOR_ROLE',  path: '/director/dashboard',      title: 'Resumen General',    icon: 'insights'    },
-  { role: 'DIRECTOR_ROLE',  path: '/director/project-plan',   title: 'Project Plan',       icon: 'dashboard'   },
-  { role: 'DIRECTOR_ROLE',  path: '/director/users',          title: 'Equipo de trabajo',  icon: 'people_alt'  },
+  { role: 'DIRECTOR_ROLE', path: '/director/dashboard', title: 'Resumen General', icon: 'insights' },
+  { role: 'DIRECTOR_ROLE', path: '/director/project-plan', title: 'Project Plan', icon: 'dashboard' },
+  { role: 'DIRECTOR_ROLE', path: '/director/users', title: 'Equipo de trabajo', icon: 'people_alt' },
 
   // Rotas qué tiene los Líderes (jefes) Colombia
-  { role: 'LEADER_ROLE',  path: '/leader/dashboard',     title: 'Resumen General',    icon: 'insights'   },
-  { role: 'LEADER_ROLE',  path: '/leader/project-plan',  title: 'Project Plan',       icon: 'dashboard'  },
-  { role: 'LEADER_ROLE',  path: '/leader/users',         title: 'Equipo de trabajo',  icon: 'people_alt' },
+  { role: 'LEADER_ROLE', path: '/leader/dashboard', title: 'Resumen General', icon: 'insights' },
+  { role: 'LEADER_ROLE', path: '/leader/project-plan', title: 'Project Plan', icon: 'dashboard' },
+  { role: 'LEADER_ROLE', path: '/leader/users', title: 'Equipo de trabajo', icon: 'people_alt' },
 
   // Rotas qué tiene los líderes de CAM (jefes)
-  { role: 'LEADER_CAM_ROLE',  path: '/leader-cam/dashboard',      title: 'Resumen General',    icon: 'insights'   },
-  { role: 'LEADER_CAM_ROLE',  path: '/leader-cam/time-report',    title: 'Agregar registro',   icon: 'add_task'   },
-  { role: 'LEADER_CAM_ROLE',  path: '/leader-cam/performance',    title: 'Mi reporte',         icon: 'bar_chart'  },
-  { role: 'LEADER_CAM_ROLE',  path: '/leader-cam/project-plan',   title: 'Project Plan',       icon: 'dashboard'  },
-  { role: 'LEADER_CAM_ROLE',  path: '/leader-cam/users',          title: 'Equipo de trabajo',  icon: 'people_alt' },
+  { role: 'LEADER_CAM_ROLE', path: '/leader-cam/dashboard', title: 'Resumen General', icon: 'insights' },
+  { role: 'LEADER_CAM_ROLE', path: '/leader-cam/time-report', title: 'Agregar registro', icon: 'add_task' },
+  { role: 'LEADER_CAM_ROLE', path: '/leader-cam/performance', title: 'Mi reporte', icon: 'bar_chart' },
+  { role: 'LEADER_CAM_ROLE', path: '/leader-cam/project-plan', title: 'Project Plan', icon: 'dashboard' },
+  { role: 'LEADER_CAM_ROLE', path: '/leader-cam/users', title: 'Equipo de trabajo', icon: 'people_alt' },
 
   // Rotas qué tiene los supervisores
-  { role: 'SUPERVISOR_ROLE',  path: '/supervisor/dashboard',      title: 'Resumen General',    icon: 'insights'   },
-  { role: 'SUPERVISOR_ROLE',  path: '/supervisor/time-report',    title: 'Agregar registro',   icon: 'add_task'   },
-  { role: 'SUPERVISOR_ROLE',  path: '/supervisor/performance',    title: 'Mi reporte',         icon: 'bar_chart'  },
-  { role: 'SUPERVISOR_ROLE',  path: '/supervisor/users',          title: 'Equipo de trabajo',  icon: 'people_alt' },
+  { role: 'SUPERVISOR_ROLE', path: '/supervisor/dashboard', title: 'Resumen General', icon: 'insights' },
+  { role: 'SUPERVISOR_ROLE', path: '/supervisor/time-report', title: 'Agregar registro', icon: 'add_task' },
+  { role: 'SUPERVISOR_ROLE', path: '/supervisor/performance', title: 'Mi reporte', icon: 'bar_chart' },
+  { role: 'SUPERVISOR_ROLE', path: '/supervisor/users', title: 'Equipo de trabajo', icon: 'people_alt' },
 
   // Rotas qué tiene los auditores
-  { role: 'AUDITOR_ROLE',  path: '/auditor/time-report',    title: 'Agregar registro',   icon: 'add_task'   },
-  { role: 'AUDITOR_ROLE',  path: '/auditor/performance',    title: 'Mi reporte',   icon: 'bar_chart'   },
+  { role: 'AUDITOR_ROLE', path: '/auditor/time-report', title: 'Agregar registro', icon: 'add_task' },
+  { role: 'AUDITOR_ROLE', path: '/auditor/performance', title: 'Mi reporte', icon: 'bar_chart' },
 
 ];
 
@@ -69,7 +71,9 @@ export class SidebarComponent implements OnInit {
   userId = localStorage.getItem('idUser');
 
   constructor(
+    private authService: AuthService,
     private tokenService: TokenService,
+    private socialAuthService: SocialAuthService,
     private router: Router,
     private notificationService: NotificationsService
   ) {
@@ -91,8 +95,13 @@ export class SidebarComponent implements OnInit {
   verify
 
   goToMyPageGraph() {
-    console.log('HOLA');
-    this.router.navigate([ ROUTES[20] + '/' + this.userId]);
+    this.router.navigate([ROUTES[20] + '/' + this.userId]);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.socialAuthService.signOut();
+    this.router.navigate(['/']);
   }
 
 
