@@ -317,7 +317,10 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
             this.mostrarTablas = true;
 
         },
-          (error) => this.notificationService.showNotificationError(error.error.error)
+          (error) => {
+            this.notificationService.showNotificationError(error.error.error);
+            this.mostrarTablas = true; 
+          }
         );
     }
   }
