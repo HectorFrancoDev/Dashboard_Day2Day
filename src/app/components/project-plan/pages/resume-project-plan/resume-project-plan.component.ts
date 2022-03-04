@@ -173,8 +173,6 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
               this.notificationService.showNotificationSuccess('Actividad agregada correctamente!');
 
               this.loadData();
-
-              this.mostrarTablas = true;
             },
             error => {
               this.notificationService.showNotificationError(error.error);
@@ -185,6 +183,8 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
           this.notificationService.showNotificationError('Información inválida');
         }
       }
+
+      this.mostrarTablas = true;
     });
   }
 
@@ -216,8 +216,6 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
               this.loadData();
 
-              this.mostrarTablas = true;
-
             },
             (error) => {
               this.notificationService.showNotificationError(error.error.error);
@@ -228,6 +226,9 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
           this.notificationService.showNotificationError('Información inválida');
         }
       }
+
+      this.mostrarTablas = true;
+
     });
   }
 
