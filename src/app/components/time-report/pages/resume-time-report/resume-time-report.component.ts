@@ -395,8 +395,8 @@ export class ResumeTimeReportComponent implements OnInit {
       date: new Date(),
       activity: {
         id: '',
-        name: 'ABCDEFks',
-        company: { code: 1, name: 'ABC', country: { code: '', name: '', img: '' } },
+        name: '',
+        company: { code: 1, name: 'Banco Davivienda', country: { code: 'CO', name: 'Colombia', img: '' } },
         open_state: true,
         initial_date: new Date(),
         end_date: new Date(),
@@ -406,10 +406,10 @@ export class ResumeTimeReportComponent implements OnInit {
       },
 
       user: {
-        id: 'string',
-        name: 'string',
-        email: 'string',
-        img: 'string',
+        id: '',
+        name: '',
+        email: '',
+        img: '',
         role: { code: '', name: '' },
         area: {
           code: 1, name: '', country: {

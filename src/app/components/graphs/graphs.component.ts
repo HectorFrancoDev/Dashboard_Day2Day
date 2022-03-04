@@ -92,12 +92,7 @@ export class GraphsComponent implements OnInit, AfterViewInit {
     // We use these empty structures as placeholders for dynamic theming.
     scales: {
       x: {},
-      y: {
-        min: 0,
-        ticks: {
-          stepSize: 4,
-        }
-      }
+      y: {}
     }
   };
 

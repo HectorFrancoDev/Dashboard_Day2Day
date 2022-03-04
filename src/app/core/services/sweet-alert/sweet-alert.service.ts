@@ -21,14 +21,14 @@ export class SweetAlertService {
     presentDelete( name: string )
     {
       return Swal.fire({
-        title: 'Estas Seguro?',
-        text: `Eliminará: ${name}`,
+        title: '¿Estás Seguro?',
+        text: `Se eleminará ${name}`,
         icon: 'warning',
         showCancelButton: true,
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, Estoy seguro'
+        confirmButtonText: 'Sí, estoy seguro'
       });
     }
   

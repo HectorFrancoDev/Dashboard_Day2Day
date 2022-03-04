@@ -34,6 +34,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   public userArea = localStorage.getItem('area');
   public userId = localStorage.getItem('idUser');
 
+  public range = new FormGroup({
+    start: new FormControl('', Validators.required),
+    end: new FormControl('', Validators.required),
+  });
+
+  public today = new Date();
+
+  mostrarGraficas = false;
+
   // 30 colores para las gráficas
   paletaDeColores: string[] = [
     '#21886B', '#0080C0', '#A78859', '#F5D57F', '#CA1177',
@@ -44,6 +53,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     '#8ABE6B', '#BBD147', '#D9E021', '#FCEE21', '#00ABD2',
   ];
 
+  allRetriveData: TimeData[] = [];
   currentMonthData: TimeData[] = [];
   lastMonthData: TimeData[] = [];
 
@@ -83,21 +93,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   detallesReportes: TimeData[] = [];
 
   // Tabla de avance actividades
-  avanceActividadesRealEsperado: TimeData[] = [];
-
-  public range = new FormGroup({
-    start: new FormControl('', Validators.required),
-    end: new FormControl('', Validators.required),
-  });
-
-  public today = new Date();
-
-  mostrarGraficas = false;
+  avanceActividadesRealEsperado: any[] = [];
 
   // Line Chart data
   labelsLineChart: string[] = [];
   dataLineChart: number[] = [];
-
 
   // Line Chart data Jefatura
   labelsLineChartJefatura: string[] = [];
@@ -122,19 +122,23 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   closedActivitiesEstimatedHours: number[] = [];
   closedActivitiesWorkedHours: number[] = [];
 
+  auditoriasVencidasRangoFecha: number = 0;
+  auditoriasVencidasMenosCien: number = 0;
+  auditoriasVencidasArribaCien: number = 0;
+  auditoriasVencidasEfectividad: number = 0;
 
   // Tabla de detalle HORAS
   displayedColumnsAuditorHours: string[] = ['auditor', 'hours'];
   dataSourceAuditorHours: MatTableDataSource<any>;
   dataSourceTopSobreEjecutados: MatTableDataSource<any>;
   dataSourceTopNoCompletados: MatTableDataSource<any>;
-  
+
   // Tabla detalles actividades
   displayedColumnDetalles: string[] = ['date', 'activity', 'hours', 'detail'];
   dataSourceDetalles: MatTableDataSource<TimeData>;
 
   // Tabla Planeado vs Real
-  displayedColumnAvanceActividades: string[] = ['activity', 'end-date', 'estimated-hours', 'worked-hours', 'avance']
+  displayedColumnAvanceActividades: string[] = ['country', 'activity', 'end-date', 'estimated-hours', 'worked-hours', 'avance', 'semaforo'];
   dataSourceAvanceActividades: MatTableDataSource<any>;
 
 
@@ -152,12 +156,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     // We use these empty structures as placeholders for dynamic theming.
     scales: {
       x: {},
-      y: {
-        min: 0,
-        ticks: {
-          stepSize: 4,
-        }
-      }
+      y: {}
     }
   };
 
@@ -348,11 +347,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     this.dataSourceDetalles.paginator = this.paginator;
 
-    this.dataSourceAvanceActividades.paginator = this.paginator;
+    // this.dataSourceAvanceActividades.paginator = this.paginator;
   }
 
   ngOnInit() {
-
     this.getUsersReports();
   }
 
@@ -433,6 +431,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           this.notificationService.showNotificationError('No es posible filtrar a los usuarios');
 
 
+
+        // All retrive data
+        this.allRetriveData = reportes;
+
         // Current month
         this.currentMonthData = this.filterReport(rangeTimeCurrentMonth, reportes);
         // Last month
@@ -454,8 +456,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
         // this.generateLineChart(lastMonth, this.lineChartData2, this.labelsLineChart2, this.dataLineChart2);
 
-        this.generateBChartDataAuditoriaCerradasMes(this.currentMonthData);
-
+        this.generateBChartDataAuditoriaCerradasMes(this.allRetriveData);
 
         this.fillAuditorHoursTable(this.currentMonthData);
 
@@ -474,7 +475,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.mostrarGraficas = true;
 
       },
-        (error) => console.log(error)
+        (error) => this.notificationService.showNotificationError(error)
       );
   }
 
@@ -483,16 +484,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     let filteredReports: TimeData[] = [];
 
-    console.log('512', rangeTime.start);
-    console.log('513', rangeTime.end);
-
     // Fecha fin
-    filteredReports = reportes.filter(({ date }) => new Date(date) <= rangeTime.end);
+    filteredReports = reportes.filter(({ date }) => rangeTime.end > moment(date).toDate());
 
     // Fecha inicio
-    filteredReports = filteredReports.filter(({ date }) => new Date(date) >= rangeTime.start);
-
-    console.log(filteredReports);
+    filteredReports = filteredReports.filter(({ date }) => rangeTime.start <= moment(date).toDate());
 
     return filteredReports;
 
@@ -790,6 +786,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     let uniqueActivitiesName: string[] = [];
     let uniqueActivities: Activity[] = [];
 
+    this.auditoriasVencidasRangoFecha = 0;
+    this.auditoriasVencidasMenosCien = 0;
+    this.auditoriasVencidasArribaCien = 0;
+    this.auditoriasVencidasEfectividad = 0;
+
     reports.forEach((report) => {
 
       if (!report.activity.is_general)
@@ -805,8 +806,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     const cerradasEsteMes: Activity[] = uniqueActivities.filter((activity) => {
       return !activity.is_general &&
-        new Date(activity.end_date) >= new Date(start) &&
-        new Date(activity.end_date) <= new Date(end)
+        moment(activity.end_date).toDate() >= moment(start).toDate() &&
+        moment(activity.end_date).toDate() < moment(end).toDate()
     });
 
     for (let i = 0; i < cerradasEsteMes.length; i++) {
@@ -815,42 +816,46 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.closedActivitiesWorkedHours.push(cerradasEsteMes[i].worked_hours);
     }
 
+    this.auditoriasVencidasRangoFecha = cerradasEsteMes.length;
+    this.auditoriasVencidasMenosCien = cerradasEsteMes.filter((a) => a.worked_hours < a.estimated_hours).length;
+    this.auditoriasVencidasArribaCien = cerradasEsteMes.filter((a) => a.worked_hours >= a.estimated_hours).length;
+    this.auditoriasVencidasEfectividad = (this.auditoriasVencidasArribaCien / this.auditoriasVencidasRangoFecha) * 100;
+
 
     this.barChartDataAuditoriaCerradasMes.labels = this.closedActivitiesNames;
     this.barChartDataAuditoriaCerradasMes.datasets[0].data = this.closedActivitiesEstimatedHours;
     this.barChartDataAuditoriaCerradasMes.datasets[1].data = this.closedActivitiesWorkedHours;
 
+
+    // Tabla de vencidos
+    this.avanceActividadesRealEsperado = [];
+    this.fillAvanceActividades(cerradasEsteMes);
+
   }
 
-  private fillAvanceActividades(reports: TimeData[]) {
-    
-    this.dataAuditorHoras = [];
-    this.usersNamesHours = [];
-    this.usersHours = [];
+  private fillAvanceActividades(cerradasEsteMes: Activity[]) {
 
-    reports.forEach((report: TimeData) => {
+    cerradasEsteMes.forEach((activity) => {
 
-      if (report.state) {
+      this.avanceActividadesRealEsperado.push({
+        country: activity.company.country.name,
+        name: activity.name,
+        fecha_cierre: activity.end_date,
+        estimated_hours: activity.estimated_hours,
+        worked_hours: activity.worked_hours,
+        avance_actividades: (activity.worked_hours / activity.estimated_hours) * 100,
+        semaforo:
+          (activity.worked_hours / activity.estimated_hours) >= 1 ? 'red' :
+            (activity.worked_hours / activity.estimated_hours) <= 1 ? 'yellow' : 'green'
+      });
 
-        if (!this.usersNamesHours.includes(report.user.name)) {
-          this.usersNamesHours.push(report.user.name);
-          this.usersHours.push(report.hours);
-        } else {
-          let user = this.usersNamesHours.indexOf(report.user.name);
-          this.usersHours[user] += report.hours;
-        }
-      }
     });
 
-    for (let i = 0; i < this.usersNamesHours.length; i++) {
-      this.dataAuditorHoras.push({ name: this.usersNamesHours[i], hours: this.usersHours[i] });
-    }
-
-    this.dataSourceAuditorHours.data = this.dataAuditorHoras.sort((a, b) => b.hours - a.hours);
+    this.dataSourceAvanceActividades.data = this.avanceActividadesRealEsperado.sort((a, b) => b.avance_actividades - a.avance_actividades);
   }
 
-  /********* CARGAR MAT SELECT DE FILTROS ************************+*/
-  
+  /******************* CARGAR MAT SELECT DE FILTROS ************************+*/
+
   selectCountry(event: any) {
 
     this.filterCompanyValue = '';
@@ -885,7 +890,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.closedActivitiesNames = [];
     this.closedActivitiesEstimatedHours = [];
     this.closedActivitiesWorkedHours = [];
-    this.generateBChartDataAuditoriaCerradasMes(this.filtereMonthData);
+    this.generateBChartDataAuditoriaCerradasMes(this.allRetriveData);
 
 
     this.dataSourceAuditorHours.data = [];
@@ -1032,7 +1037,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.closedActivitiesNames = [];
     this.closedActivitiesEstimatedHours = [];
     this.closedActivitiesWorkedHours = [];
-    this.generateBChartDataAuditoriaCerradasMes(this.filtereMonthData);
+    this.generateBChartDataAuditoriaCerradasMes(this.allRetriveData);
 
 
     this.dataSourceAuditorHours.data = [];
@@ -1206,10 +1211,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       // 30 días menos
       const rangeTimeLastMonth: RangeTime = {
         start: moment(start).subtract(1, 'month').toDate(),
-        end: moment(end).subtract(1, 'month').toDate()
+        end: moment(endMoment).subtract(1, 'month').toDate()
       };
 
-      // this.reportService.getAllTimeReportsDashboard(filteredRangeTime)
       this.reportService.getAllTimeReportsDashboard()
         .subscribe((reports: ResponseTimeData) => {
 
@@ -1286,7 +1290,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           this.closedActivitiesNames = [];
           this.closedActivitiesEstimatedHours = [];
           this.closedActivitiesWorkedHours = [];
-          this.generateBChartDataAuditoriaCerradasMes(this.currentMonthData);
+          this.generateBChartDataAuditoriaCerradasMes(this.allRetriveData);
 
           this.chargeCountries(this.currentMonthData);
           this.chargeCompanies(this.currentMonthData);
@@ -1311,7 +1315,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           this.mostrarGraficas = true;
 
         },
-          (error) => console.log(error)
+          (error) => this.notificationService.showNotificationError(error)
         );
 
     }
@@ -1431,7 +1435,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.closedActivitiesEstimatedHours = [];
         this.closedActivitiesWorkedHours = [];
 
-        this.generateBChartDataAuditoriaCerradasMes(this.currentMonthData);
+        this.generateBChartDataAuditoriaCerradasMes(this.allRetriveData);
 
         this.chargeCountries(this.currentMonthData);
         this.chargeCompanies(this.currentMonthData);
@@ -1456,7 +1460,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.mostrarGraficas = true;
 
       },
-        (error) => console.log(error)
+        (error) => this.notificationService.showNotificationError(error)
       );
 
 

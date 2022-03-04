@@ -286,7 +286,7 @@
                                         <div class="card-header card-header-tabs card-header-primary">
                                             <div class="nav-tabs-navigation">
                                                 <div class="nav-tabs-wrapper">
-                                                    <span class="nav-tabs-title">Tasks:</span>
+                                                    <span class="nav-tabs-title">Índice de horas:</span>
                                                     <ul class="nav nav-tabs" data-tabs="tabs">
                                                         <li class="nav-item">
                                                             <a mat-button class="nav-link active" href="#profile"
@@ -499,81 +499,6 @@
 
                             </div>
 
-                            <div class="row">
-
-                                <div class="col-md-12">
-                                    <div class="card">
-
-
-                                        <div class="card-header card-header-success"
-                                            style="background-color: #33348e !important;">
-                                            <h4 class="card-title ">Tabla de registros</h4>
-                                            <p class="card-category">
-                                                Lista de los registros ordenados del más reciente al más antiguo
-                                            </p>
-                                        </div>
-
-                                        <div class="card-body">
-
-                                            <table mat-table [dataSource]="dataSourceDetalles" matSort>
-
-                                                <!-- Column -->
-                                                <ng-container matColumnDef="date">
-                                                    <th mat-header-cell *matHeaderCellDef class="primeraColumna"> Fecha
-                                                    </th>
-                                                    <td mat-cell *matCellDef="let row" class="primeraColumna">
-                                                        {{row.date | date:"dd/MM/yyyy"}}
-                                                    </td>
-                                                </ng-container>
-
-                                                <!-- Column -->
-                                                <ng-container matColumnDef="activity">
-                                                    <th mat-header-cell *matHeaderCellDef class="segundaColumna">
-                                                        Actividad </th>
-                                                    <td mat-cell *matCellDef="let row" class="segundaColumna">
-                                                        {{row.activity.name }}
-                                                    </td>
-                                                </ng-container>
-
-
-                                                <!-- Column -->
-                                                <ng-container matColumnDef="hours">
-                                                    <th mat-header-cell *matHeaderCellDef class="terceraColumna"> Horas
-                                                    </th>
-                                                    <td mat-cell *matCellDef="let row" class="terceraColumna">
-                                                        {{row.hours}} </td>
-                                                </ng-container>
-
-                                                <!--Column -->
-                                                <ng-container matColumnDef="detail">
-                                                    <th mat-header-cell *matHeaderCellDef class="cuartaColumna"> Detalle
-                                                    </th>
-                                                    <td mat-cell *matCellDef="let row" class="cuartaColumna">
-                                                        {{row.detail }} </td>
-                                                </ng-container>
-
-                                                <tr mat-header-row *matHeaderRowDef="displayedColumnDetalles"></tr>
-                                                <tr mat-row *matRowDef="let row; columns: displayedColumnDetalles;">
-                                                </tr>
-
-                                                <!-- Row shown when there is no matching data. -->
-                                                <tr class="mat-row" *matNoDataRow>
-                                                    <td class="mat-cell" colspan="4">No hay registros en el rango de
-                                                        fecha seleccionado</td>
-                                                </tr>
-
-                                            </table>
-
-                                            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
-                                                aria-label="Select page of users">
-                                            </mat-paginator>
-
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
 
                     </mat-tab>
@@ -581,6 +506,90 @@
                     <mat-tab label="Actividades">
 
                         <div *ngIf="mostrarGraficas">
+
+                            <div class="row">
+
+                                <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
+
+                                    <div class="card card-stats">
+                                        <div class="card-header card-header-info card-header-icon">
+                                            <div class="card-icon">
+                                                <i class="material-icons">assignment</i>
+                                            </div>
+                                            <p class="card-category">Auditorías vencidas a la fecha</p>
+                                            <h3 class="card-title">{{auditoriasVencidasRangoFecha }}</h3>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="stats">
+                                                <!-- Horas trabajadas en total -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
+
+                                    <div class="card card-stats">
+                                        <div class="card-header card-header-success card-header-icon">
+                                            <div class="card-icon">
+                                                <i class="material-icons">fact_check</i>
+                                            </div>
+                                            <p class="card-category">Auditorías igual o por encima del 100%</p>
+                                            <h3 class="card-title">{{auditoriasVencidasArribaCien }}
+                                            </h3>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="stats">
+                                                <!-- Horas trabajadas en promedio -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
+
+                                    <div class="card card-stats">
+                                        <div class="card-header card-header-warning card-header-icon">
+                                            <div class="card-icon">
+                                                <i class="material-icons">report_problem</i>
+                                            </div>
+                                            <p class="card-category">Auditorías por debajo del 100%</p>
+                                            <h3 class="card-title">{{auditoriasVencidasMenosCien }}
+                                            </h3>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="stats">
+                                                <!-- Horas trabajadas en promedio -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
+
+                                    <div class="card card-stats">
+                                        <div class="card-header card-header-warning card-header-icon">
+                                            <div class="card-icon">
+                                                <i class="material-icons">task_alt</i>
+                                            </div>
+                                            <p class="card-category">Efectividad</p>
+                                            <h3 class="card-title">{{auditoriasVencidasEfectividad | number : '1.2-2' }}%
+                                            </h3>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="stats">
+                                                <!-- Horas trabajadas en promedio -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="card card-chart">
@@ -601,16 +610,16 @@
                                 </div>
                             </div>
 
-                            <!-- <div class="row">
+                            <div class="row">
 
                                 <div class="col-md-12">
                                     <div class="card">
 
                                         <div class="card-header card-header-danger"
                                             style="background-color: #33348e !important;">
-                                            <h4 class="card-title ">Tabla de registros</h4>
+                                            <h4 class="card-title ">Tabla de auditorías vencidas</h4>
                                             <p class="card-category">
-                                                Lista de los registros ordenados del más reciente al más antiguo
+                                                Lista de las actividades vencidads durante el rango seleccionado
                                             </p>
                                         </div>
 
@@ -618,71 +627,169 @@
 
                                             <table mat-table [dataSource]="dataSourceAvanceActividades" matSort>
 
-                                               
+                                                <ng-container matColumnDef="country">
+                                                    <th mat-header-cell *matHeaderCellDef class="">
+                                                        País </th>
+                                                    <td mat-cell *matCellDef="let row" class="">
+                                                        {{row.country }}
+                                                    </td>
+                                                </ng-container>
+
                                                 <ng-container matColumnDef="activity">
-                                                    <th mat-header-cell *matHeaderCellDef class="segundaColumna">
+                                                    <th mat-header-cell *matHeaderCellDef class="">
                                                         Actividad </th>
-                                                    <td mat-cell *matCellDef="let row" class="segundaColumna">
-                                                        {{row.activity.name }}
+                                                    <td mat-cell *matCellDef="let row" class="">
+                                                        {{row.name }}
                                                     </td>
                                                 </ng-container>
 
-                                               
                                                 <ng-container matColumnDef="end-date">
-                                                    <th mat-header-cell *matHeaderCellDef class="primeraColumna"> Fecha de cierre
+                                                    <th mat-header-cell *matHeaderCellDef class=""> Fecha
+                                                        de cierre
                                                     </th>
-                                                    <td mat-cell *matCellDef="let row" class="primeraColumna">
-                                                        {{row.date | date:"dd/MM/yyyy"}}
+                                                    <td mat-cell *matCellDef="let row" class="">
+                                                        {{row.fecha_cierre | date:"dd/MM/yyyy"}}
                                                     </td>
                                                 </ng-container>
 
-
-                                     
                                                 <ng-container matColumnDef="estimated-hours">
-                                                    <th mat-header-cell *matHeaderCellDef class="terceraColumna"> Horas estimadas
+                                                    <th mat-header-cell *matHeaderCellDef class="">
+                                                        Horas estimadas
                                                     </th>
-                                                    <td mat-cell *matCellDef="let row" class="terceraColumna">
-                                                        {{row.hours}} </td>
+                                                    <td mat-cell *matCellDef="let row" class="">
+                                                        {{row.estimated_hours | number: '1.2-2'}} </td>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="worked-hours">
-                                                    <th mat-header-cell *matHeaderCellDef class="cuartaColumna"> Horas trabajadas
+                                                    <th mat-header-cell *matHeaderCellDef class="">
+                                                        Horas trabajadas
                                                     </th>
-                                                    <td mat-cell *matCellDef="let row" class="cuartaColumna">
-                                                        {{row.detail }} </td>
+                                                    <td mat-cell *matCellDef="let row" class="">
+                                                        {{row.worked_hours | number: '1.2-2' }} </td>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="avance">
-                                                    <th mat-header-cell *matHeaderCellDef class="cuartaColumna"> Porcentaje avance
+                                                    <th mat-header-cell *matHeaderCellDef class="">
+                                                        % avance
                                                     </th>
-                                                    <td mat-cell *matCellDef="let row" class="cuartaColumna">
-                                                        {{row.detail }} </td>
+                                                    <td mat-cell *matCellDef="let row" class="">
+                                                        {{row.avance_actividades | number: '1.2-2' }}%
+                                                    </td>
                                                 </ng-container>
 
-                                                <tr mat-header-row *matHeaderRowDef="displayedColumnDetalles"></tr>
-                                                <tr mat-row *matRowDef="let row; columns: displayedColumnDetalles;">
+                                                <ng-container matColumnDef="semaforo">
+                                                    <th mat-header-cell *matHeaderCellDef class="">
+                                                    </th>
+                                                    <td mat-cell *matCellDef="let row" class=""
+                                                        [style.background-color]="row.semaforo">
+                                                    </td>
+                                                </ng-container>
+
+                                                <tr mat-header-row *matHeaderRowDef="displayedColumnAvanceActividades">
+                                                </tr>
+                                                <tr mat-row
+                                                    *matRowDef="let row; columns: displayedColumnAvanceActividades;">
                                                 </tr>
 
-                                        
+
                                                 <tr class="mat-row" *matNoDataRow>
-                                                    <td class="mat-cell" colspan="4">No hay registros en el rango de
+                                                    <td class="mat-cell" colspan="4">
+                                                        No hay registros en el rango de
                                                         fecha seleccionado</td>
                                                 </tr>
 
                                             </table>
 
-                                            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
+                                            <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
                                                 aria-label="Select page of users">
-                                            </mat-paginator>
+                                            </mat-paginator> -->
 
 
                                         </div>
                                     </div>
                                 </div>
-                            </div> -->
+                            </div>
 
                         </div>
 
+                    </mat-tab>
+
+                    <mat-tab label="Detalle">
+
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <div class="card">
+
+
+                                    <div class="card-header card-header-success"
+                                        style="background-color: #33348e !important;">
+                                        <h4 class="card-title ">Tabla de detalles</h4>
+                                        <p class="card-category">
+                                            Lista de los registros ordenados del más reciente al más antiguo
+                                        </p>
+                                    </div>
+
+                                    <div class="card-body">
+
+                                        <table mat-table [dataSource]="dataSourceDetalles" matSort>
+
+                                            <!-- Column -->
+                                            <ng-container matColumnDef="date">
+                                                <th mat-header-cell *matHeaderCellDef class="primeraColumna"> Fecha
+                                                </th>
+                                                <td mat-cell *matCellDef="let row" class="primeraColumna">
+                                                    {{row.date | date:"dd/MM/yyyy"}}
+                                                </td>
+                                            </ng-container>
+
+                                            <!-- Column -->
+                                            <ng-container matColumnDef="activity">
+                                                <th mat-header-cell *matHeaderCellDef class="segundaColumna">
+                                                    Actividad </th>
+                                                <td mat-cell *matCellDef="let row" class="segundaColumna">
+                                                    {{row.activity.name }}
+                                                </td>
+                                            </ng-container>
+
+
+                                            <!-- Column -->
+                                            <ng-container matColumnDef="hours">
+                                                <th mat-header-cell *matHeaderCellDef class="terceraColumna"> Horas
+                                                </th>
+                                                <td mat-cell *matCellDef="let row" class="terceraColumna">
+                                                    {{row.hours}} </td>
+                                            </ng-container>
+
+                                            <!--Column -->
+                                            <ng-container matColumnDef="detail">
+                                                <th mat-header-cell *matHeaderCellDef class="cuartaColumna"> Detalle
+                                                </th>
+                                                <td mat-cell *matCellDef="let row" class="cuartaColumna">
+                                                    {{row.detail }} </td>
+                                            </ng-container>
+
+                                            <tr mat-header-row *matHeaderRowDef="displayedColumnDetalles"></tr>
+                                            <tr mat-row *matRowDef="let row; columns: displayedColumnDetalles;">
+                                            </tr>
+
+                                            <!-- Row shown when there is no matching data. -->
+                                            <tr class="mat-row" *matNoDataRow>
+                                                <td class="mat-cell" colspan="4">No hay registros en el rango de
+                                                    fecha seleccionado</td>
+                                            </tr>
+
+                                        </table>
+
+                                        <mat-paginator [pageSizeOptions]="[10, 30, 50, 100]"
+                                            aria-label="Select page of users">
+                                        </mat-paginator>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     </mat-tab>
 

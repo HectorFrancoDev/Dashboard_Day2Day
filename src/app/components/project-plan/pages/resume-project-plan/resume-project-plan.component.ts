@@ -13,6 +13,7 @@ import { AddSpecificActivityComponent } from '../add-specific-activity/add-speci
 import { AddGeneralActivityComponent } from '../add-general-activity/add-general-activity.component';
 
 import * as _ from 'lodash';
+import { SweetAlertService } from 'app/core/services/sweet-alert/sweet-alert.service';
 
 @Component({
   selector: 'app-resume-project-plan',
@@ -21,6 +22,8 @@ import * as _ from 'lodash';
 })
 export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
+
+  public mostrarTablas: boolean = false;
 
   public generalActivities: Activity[] = [];
   public specificActivities: Activity[] = [];
@@ -32,6 +35,7 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
   public userId = localStorage.getItem('idUser');
 
   public poseePermisos: boolean = false;
+  public poseePermisosSuperior: boolean = false;
 
   public loader: boolean = true;
 
@@ -42,8 +46,8 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
     estimated_hours: 0,
     worked_hours: 0,
     open_state: true,
-    is_general: true,
-    company: { code: 1, name: '', country: { code: '', name: '', img: '' } }
+    is_general: false,
+    company: { code: 1, name: 'Banco Davivienda', country: { code: 'CO', name: 'Colombia', img: '' } }
   };
 
   // Paginator
@@ -53,9 +57,7 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
 
   displayedColumnsGeneral: string[] = ['name', 'inicio-date', 'fin-date'];
-  displayedColumnsSpecific: string[] =
-    // ['pais', 'name', 'inicio-date', 'fin-date', 'porcentaje-avance', 'actions'];
-    ['pais', 'empresa', 'name', 'porcentaje-avance', 'actions'];
+  displayedColumnsSpecific: string[] = ['pais', 'empresa', 'name', 'porcentaje-avance', 'actions'];
 
   generalActivitiesSource: MatTableDataSource<Activity>;
   specificActivitiesSource: MatTableDataSource<Activity>;
@@ -68,11 +70,16 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
     private activityService: ActivityService,
     public dialog: MatDialog,
     private notificationService: NotificationsService,
+    private sweetAlert: SweetAlertService,
     private router: Router
   ) {
 
-    if (this.userRole == 'VP_ROLE' || this.userRole == 'DIRECTOR_ROLE')
+    if (this.userRole === 'VP_ROLE' || this.userRole === 'DIRECTOR_ROLE' ||
+      this.userRole === 'LEADER_ROLE' || this.userRole === 'LEADER_CAM_ROLE')
       this.poseePermisos = true;
+
+    if ((this.userRole === 'VP_ROLE' || this.userRole === 'DIRECTOR_ROLE') && this.userCountry === 'CO')
+      this.poseePermisosSuperior = true;
 
     this.generalActivitiesSource = new MatTableDataSource(this.generalActivities);
     this.specificActivitiesSource = new MatTableDataSource(this.specificActivities);
@@ -98,36 +105,36 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
       (activities) => {
 
         // Inicializa la tabla de actividades generales
-        this.generalActivities = activities.activities.filter(a => a.is_general);
+        this.generalActivities = activities.activities.filter((a) => a.is_general && a.state);
         this.generalActivitiesSource.data = this.generalActivities;
 
         // Inicializa la tabla de actividades especificas
         // Si es el vicepresidente
         if (this.userRole === 'VP_ROLE')
-          this.specificActivities = activities.activities.filter((a) => !a.is_general);
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.state);
 
         // Si es gerente de CAM desde Colombia
         else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CAM')
-          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code !== 'CO');
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code !== 'CO' && a.state);
 
 
         // Si es Director de conductas especiales
         else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9') {
-          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === 'CO');
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === 'CO' && a.state);
           this.specificActivities = this.filterByUserAreaId(this.userArea, this.specificActivities);
         }
 
         // Si es director de Colombia 
         else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CO') {
-          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === 'CO');
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === 'CO' && a.state);
         }
 
         else if (this.userRole === 'LEADER_CAM_ROLE')
-          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === this.userCountry);
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === this.userCountry && a.state);
 
         // Si es jefe Normal
         else if (this.userRole === 'LEADER_ROLE') {
-          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === this.userCountry);
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === this.userCountry && a.state);
           this.specificActivities = this.filterByUserAreaId(this.userArea, this.specificActivities);
         }
 
@@ -135,12 +142,18 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
         this.specificActivitiesSource.data = this.specificActivities;
 
+
+        this.mostrarTablas = true;
+
       },
       (error) => console.error(error)
     );
   }
 
   addGeneral() {
+
+    this.mostrarTablas = false;
+
     const dialogRef = this.dialog.open(AddGeneralActivityComponent, {
       width: '70%',
       data: this.data
@@ -151,18 +164,20 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
         const checkData = this.verifyActivityData(result);
         if (checkData) {
           const activity = result as Activity;
+
           activity.is_general = true;
-          activity.open_state = true;
 
           this.activityService.createActivity(activity).subscribe(
             activity => {
               this.generalActivities.push(activity.activity);
-              this.notificationService.showNotificationSuccess('Actividad Agregada Correctamente!');
+              this.notificationService.showNotificationSuccess('Actividad agregada correctamente!');
 
               this.loadData();
+
+              this.mostrarTablas = true;
             },
             error => {
-              console.log(error)
+              this.notificationService.showNotificationError(error.error);
             }
           );
         }
@@ -174,33 +189,42 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
   }
 
   addSpecific() {
+
+    this.mostrarTablas = false;
+
     const dialogRef = this.dialog.open(AddSpecificActivityComponent, {
       width: '70%',
       data: this.data
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+
         const checkData = this.verifyActivityData(result);
+
         if (checkData) {
+
           const activity = result as Activity;
+
           activity.is_general = false;
-          activity.open_state = false;
 
           this.activityService.createActivity(activity).subscribe(
             activity => {
               this.specificActivities.push(activity.activity);
 
-              this.notificationService.showNotificationSuccess('Actividad Agregada Correctamente!');
+              this.notificationService.showNotificationSuccess('Actividad agregada correctamente');
 
               this.loadData();
+
+              this.mostrarTablas = true;
+
             },
-            error => {
-              console.log(error)
+            (error) => {
+              this.notificationService.showNotificationError(error.error.error);
             }
           );
-        }
-        else {
+
+        } else {
           this.notificationService.showNotificationError('Información inválida');
         }
       }
@@ -257,10 +281,6 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
     return ((horasTrabajadas / horasEstimadas) * 100).toFixed(2);
   }
 
-  /**
-   * Ir al detalle de la actividad en cuestión
-   * @param {string} idActivity 
-   */
   showActivity(idActivity: string) {
 
     if (this.userRole === 'SUPERVISOR_ROLE')
@@ -280,6 +300,27 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
   }
 
+  async deleteActivity(idActivity: string) {
+
+    const { isConfirmed } = await this.sweetAlert.presentDelete('la actividad del Project Plan');
+
+    if (isConfirmed) {
+      this.mostrarTablas = false;
+
+      this.activityService.deleteActivity(idActivity)
+        .subscribe(
+          (data) => {
+            this.notificationService.showNotificationSuccess('Actividad eliminada con éxito');
+            this.loadData();
+
+            this.mostrarTablas = true;
+
+        },
+          (error) => this.notificationService.showNotificationError(error.error.error)
+        );
+    }
+  }
+
   private chargeCompanies(activities: Activity[]) {
 
     let companiesTemp: string[] = [];
@@ -295,7 +336,6 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
     });
   }
-
 
   private filterByUserAreaId(area_code: string, activities: Activity[]): Activity[] {
 
@@ -314,8 +354,6 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
     return newActivities;
   }
-
-
 
   resetDataRange() {
     console.log('Clickeado');
