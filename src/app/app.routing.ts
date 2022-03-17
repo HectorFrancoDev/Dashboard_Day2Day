@@ -62,13 +62,23 @@ const routes: Routes = [
     }]
   },
 
-  // leader
+  // auditor
   {
     path: 'auditor',
     component: GeneralLayoutComponent,
     children: [{
       path: '',
       loadChildren: () => import('./modules/auditor/auditor.module').then(m => m.AuditorModule)
+    }]
+  },
+
+  // auditor
+  {
+    path: 'apoyo-direccion',
+    component: GeneralLayoutComponent,
+    children: [{
+      path: '',
+      loadChildren: () => import('./modules/general/general.module').then(m => m.GeneralModule)
     }]
   },
 

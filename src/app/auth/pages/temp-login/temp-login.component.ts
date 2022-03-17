@@ -61,6 +61,10 @@ export class TempLoginComponent implements OnInit {
               else if (res.user.role.code === 'DIRECTOR_ROLE')
                 this.router.navigate(['/director']);
 
+              // Si es apoyo de dirección
+              else if (res.user.role.code === 'APOYO_DIRECCION_ROLE')
+                this.router.navigate(['/apoyo-direccion']);
+
               // Si es un administrador lo mando a la ruta /admin
               else if (res.user.role.code === 'LEADER_ROLE')
                 this.router.navigate(['/leader']);
@@ -124,6 +128,10 @@ export class TempLoginComponent implements OnInit {
             else if (res.user.role.code === 'DIRECTOR_ROLE')
               this.router.navigate(['/director']);
 
+            // Si es apoyo de dirección
+            else if (res.user.role.code === 'APOYO_DIRECCION_ROLE') 
+              this.router.navigate(['/apoyo-direccion']);
+
             // Si es un administrador lo mando a la ruta /admin
             else if (res.user.role.code === 'LEADER_ROLE')
               this.router.navigate(['/leader']);
@@ -142,7 +150,7 @@ export class TempLoginComponent implements OnInit {
 
             // Llegado el caso el auditor no tuviera rol alguno
             else
-              this.notificationService.showNotificationError('No fue posible redirigirlo a su dashboard ');
+              this.notificationService.showNotificationError('No fue posible redirigirlo a su dashboard');
 
           }
 

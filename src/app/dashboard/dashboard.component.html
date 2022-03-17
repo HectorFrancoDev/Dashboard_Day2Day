@@ -576,7 +576,8 @@
                                                 <i class="material-icons">task_alt</i>
                                             </div>
                                             <p class="card-category">Efectividad</p>
-                                            <h3 class="card-title">{{auditoriasVencidasEfectividad | number : '1.2-2' }}%
+                                            <h3 class="card-title">{{auditoriasVencidasEfectividad | number : '1.2-2'
+                                                }}%
                                             </h3>
                                         </div>
                                         <div class="card-footer">
@@ -625,15 +626,67 @@
 
                                         <div class="card-body">
 
-                                            <table mat-table [dataSource]="dataSourceAvanceActividades" matSort>
+                                            <mat-accordion displayMode="flat" multi class="mat-table">
+                                                <section matSort class="mat-elevation-z2 mat-header-row">
+                                                    <span class="mat-cell" mat-sort-header="vesselName">Nombre de la
+                                                        actividad </span>
+                                                    <span class="mat-cell" mat-sort-header="vesselId">Fecha de cierre
+                                                    </span>
+                                                    <span class="mat-cell" mat-sort-header="vesselStatus">Estado en Open
+                                                        Pages </span>
+                                                    <span class="mat-cell" mat-sort-header="ircs">Procentaje de
+                                                        ejecución </span>
+                                                    <span class="mat-cell" mat-sort-header="semaforo"></span>
+                                                </section>
 
-                                                <ng-container matColumnDef="country">
-                                                    <th mat-header-cell *matHeaderCellDef class="">
-                                                        País </th>
-                                                    <td mat-cell *matCellDef="let row" class="">
-                                                        {{row.country }}
-                                                    </td>
-                                                </ng-container>
+                                                <mat-expansion-panel *ngFor="let item of avanceActividadesRealEsperado">
+
+
+                                                    <mat-expansion-panel-header class=""
+                                                        style="margin-top: 5px;">
+                                                        <span class="mat-cell">{{item.name}} </span>
+                                                        <span class="mat-cell">{{item.fecha_cierre | date:"dd/MM/yyyy"}}
+                                                        </span>
+                                                        <span class="mat-cell">{{item.open_state}} </span>
+                                                        <span class="mat-cell">{{item.avance_actividades | number:'1.2-2'}}% </span>
+                                                        <!-- <span mat-cell *matCellDef="let row" class="" [style.background-color]="item.semaforo" > </span> -->
+                                                        <!-- <span class="mat-cell" [style.background-color]="item.semaforo"
+                                                            style="width: 10px;"> </span> -->
+                                                    </mat-expansion-panel-header>
+
+                                                    <div>
+                                                    
+                                                        <table class="table">
+                                                            <thead>
+                                                              <tr>
+                                                                <th scope="col">País</th>
+                                                                <th scope="col">Empresa</th>
+                                                                <th scope="col">Horas Estimadas</th>
+                                                                <th scope="col">Horas Ejecutadas</th>
+                                                              </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                              <tr>
+                                                                <td>{{item.country}}</td>
+                                                                <td>{{item.company}}</td>
+                                                                <td>{{item.estimated_hours | number:'1.2-2'}}</td>
+                                                                <td>{{item.worked_hours | number:'1.2-2'}}</td>
+                                                              </tr>
+                                                            </tbody>
+                                                          </table>
+
+                                                    </div>
+
+                                                </mat-expansion-panel>
+
+                                            </mat-accordion>
+
+
+                                            <br>
+
+                                            <!-- DATA REAL -->
+                                            <!-- <table mat-table [dataSource]="dataSourceAvanceActividades">
+
 
                                                 <ng-container matColumnDef="activity">
                                                     <th mat-header-cell *matHeaderCellDef class="">
@@ -670,11 +723,19 @@
 
                                                 <ng-container matColumnDef="avance">
                                                     <th mat-header-cell *matHeaderCellDef class="">
-                                                        % avance
+                                                        % ejecución
                                                     </th>
                                                     <td mat-cell *matCellDef="let row" class="">
                                                         {{row.avance_actividades | number: '1.2-2' }}%
                                                     </td>
+                                                </ng-container>
+
+                                                <ng-container matColumnDef="estado-open">
+                                                    <th mat-header-cell *matHeaderCellDef class="">
+                                                        Open Pages
+                                                    </th>
+                                                    <td mat-cell *matCellDef="let row" class="">
+                                                        {{ row.open_state }} </td>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="semaforo">
@@ -685,20 +746,22 @@
                                                     </td>
                                                 </ng-container>
 
+
                                                 <tr mat-header-row *matHeaderRowDef="displayedColumnAvanceActividades">
                                                 </tr>
                                                 <tr mat-row
                                                     *matRowDef="let row; columns: displayedColumnAvanceActividades;">
                                                 </tr>
 
-
                                                 <tr class="mat-row" *matNoDataRow>
                                                     <td class="mat-cell" colspan="4">
                                                         No hay registros en el rango de
-                                                        fecha seleccionado</td>
+                                                        fecha seleccionado
+                                                    </td>
                                                 </tr>
 
-                                            </table>
+                                            </table> -->
+
 
                                             <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
                                                 aria-label="Select page of users">

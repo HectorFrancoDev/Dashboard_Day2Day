@@ -47,6 +47,13 @@ export const ROUTES: RouteInfo[] = [
   { role: 'AUDITOR_ROLE', path: '/auditor/time-report', title: 'Agregar registro', icon: 'add_task' },
   { role: 'AUDITOR_ROLE', path: '/auditor/performance', title: 'Mi reporte', icon: 'bar_chart' },
 
+  // Rotas qué tiene el Apoyo de Dirección
+  { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/dashboard', title: 'Resumen General', icon: 'insights' },
+  { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/time-report', title: 'Agregar registro', icon: 'add_task' },
+  { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/performance', title: 'Mi reporte', icon: 'bar_chart' },
+  { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/project-plan', title: 'Project Plan', icon: 'dashboard' },
+  { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/users', title: 'Equipo de trabajo', icon: 'people_alt' },
+
 ];
 
 export const ROLES = [
@@ -55,7 +62,8 @@ export const ROLES = [
   'LEADER_ROLE',
   'LEADER_CAM_ROLE',
   'SUPERVISOR_ROLE',
-  'AUDITOR_ROLE'
+  'AUDITOR_ROLE',
+  'APOYO_DIRECCION_ROLE'
 ]
 
 @Component({
@@ -91,12 +99,6 @@ export class SidebarComponent implements OnInit {
   isMobileMenu() {
     return ($(window).width > 900) ? false : true;
   };
-
-  verify
-
-  goToMyPageGraph() {
-    this.router.navigate([ROUTES[20] + '/' + this.userId]);
-  }
 
   logout() {
     this.authService.logout();

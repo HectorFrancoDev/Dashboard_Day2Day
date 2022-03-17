@@ -13,16 +13,6 @@ import { SocialAuthService, GoogleLoginProvider, SocialUser } from 'angularx-soc
 })
 export class GoogleLoginComponent implements OnInit {
 
-
-  rolesRoutes = [
-    { code: 'VP_ROLE', route: '/vicepresident' },
-    { code: 'DIRECTOR_ROLE', route: '/director' },
-    { code: 'LEADER_ROLE', route: '/leader' },
-    { code: 'LEADER_CAM_ROLE', route: '/leader-cam' },
-    { code: 'SUPERVISOR_ROLE', route: '/supervisor' },
-    { code: 'AUDITOR_ROLE', route: '/auditor' },
-  ]
-
   constructor(
 
     private authService: AuthService,
@@ -42,65 +32,69 @@ export class GoogleLoginComponent implements OnInit {
 
   verifyAuth() {
 
-    
+
     const token = this.tokenService.getToken();
 
     if (token) {
       this.authService.getUserLogged().subscribe(
-       (res) => {
+        (res) => {
 
-        // Si es un administrador lo mando a la ruta /vicepresident
-        try {
+          // Si es un administrador lo mando a la ruta /vicepresident
+          try {
 
-          if (res.user.role === null || res.user.area === null) {
-            this.notificationService.showNotificationError('Error obteniendo los datos del usuario');
+            if (res.user.role === null || res.user.area === null) {
+              this.notificationService.showNotificationError('Error obteniendo los datos del usuario');
+            }
+
+            else {
+
+              // Guardar en el localstorage
+              this.tokenService.setToken(
+                token,
+                res.user.name,
+                res.user.area.country.code,
+                res.user.role.code,
+                res.user.area.code,
+                res.user.id,
+                res.user.role.name
+              );
+
+              if (res.user.role.code === 'VP_ROLE')
+                this.router.navigate(['/vicepresident']);
+
+              // Si es un administrador lo mando a la ruta /admin
+              else if (res.user.role.code === 'DIRECTOR_ROLE')
+                this.router.navigate(['/director']);
+
+              // Si es apoyo de dirección
+              else if (res.user.role.code === 'APOYO_DIRECCION_ROLE')
+                this.router.navigate(['/apoyo-direccion']);
+
+              // Si es un administrador lo mando a la ruta /admin
+              else if (res.user.role.code === 'LEADER_ROLE')
+                this.router.navigate(['/leader']);
+
+              // Si es jefe de algún país de CAM
+              else if (res.user.role.code === 'LEADER_CAM_ROLE')
+                this.router.navigate(['/leader-cam']);
+
+              // Si es un usuario va a la ruta /supervisor
+              else if (res.user.role.code === 'SUPERVISOR_ROLE')
+                this.router.navigate(['/supervisor']);
+
+              // Si es un auditor va a la ruta /dashboard
+              else if (res.user.role.code === 'AUDITOR_ROLE')
+                this.router.navigate(['/auditor']);
+
+              // Llegado el caso el auditor no tuviera rol alguno
+              else
+                this.notificationService.showNotificationError('No fue posible redirigirlo a su dashboard ');
+
+            }
+
+          } catch (error) {
+            this.notificationService.showNotificationError(error);
           }
-
-          else {
-
-            // Guardar en el localstorage
-            this.tokenService.setToken(
-              token,
-              res.user.name,
-              res.user.area.country.code,
-              res.user.role.code,
-              res.user.area.code,
-              res.user.id,
-              res.user.role.name
-            );
-
-            if (res.user.role.code === 'VP_ROLE')
-              this.router.navigate(['/vicepresident']);
-
-            // Si es un administrador lo mando a la ruta /admin
-            else if (res.user.role.code === 'DIRECTOR_ROLE')
-              this.router.navigate(['/director']);
-
-            // Si es un administrador lo mando a la ruta /admin
-            else if (res.user.role.code === 'LEADER_ROLE')
-              this.router.navigate(['/leader']);
-
-            // Si es jefe de algún país de CAM
-            else if (res.user.role.code === 'LEADER_CAM_ROLE')
-              this.router.navigate(['/leader-cam']);
-
-            // Si es un usuario va a la ruta /supervisor
-            else if (res.user.role.code === 'SUPERVISOR_ROLE')
-              this.router.navigate(['/supervisor']);
-
-            // Si es un auditor va a la ruta /dashboard
-            else if (res.user.role.code === 'AUDITOR_ROLE')
-              this.router.navigate(['/auditor']);
-
-            // Llegado el caso el auditor no tuviera rol alguno
-            else
-              this.notificationService.showNotificationError('No fue posible redirigirlo a su dashboard ');
-
-          }
-
-        } catch (error) {
-          this.notificationService.showNotificationError(error);
-        }
 
         },
         error => console.log(error)
@@ -143,6 +137,10 @@ export class GoogleLoginComponent implements OnInit {
             // Si es un administrador lo mando a la ruta /admin
             else if (res.user.role.code === 'DIRECTOR_ROLE')
               this.router.navigate(['/director']);
+
+            // Si es apoyo de dirección
+            else if (res.user.role.code === 'APOYO_DIRECCION_ROLE')
+              this.router.navigate(['/apoyo-direccion']);
 
             // Si es un administrador lo mando a la ruta /admin
             else if (res.user.role.code === 'LEADER_ROLE')
