@@ -54,6 +54,13 @@ export const ROUTES: RouteInfo[] = [
   { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/project-plan', title: 'Project Plan', icon: 'dashboard' },
   { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/users', title: 'Equipo de trabajo', icon: 'people_alt' },
 
+  // Rotas qué tiene el Apoyo de Dirección
+  { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/dashboard', title: 'Resumen General', icon: 'insights' },
+  { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/time-report', title: 'Agregar registro', icon: 'add_task' },
+  { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/performance', title: 'Mi reporte', icon: 'bar_chart' },
+  { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/project-plan', title: 'Project Plan', icon: 'dashboard' },
+  { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/users', title: 'Equipo de trabajo', icon: 'people_alt' },
+
 ];
 
 export const ROLES = [
@@ -63,7 +70,8 @@ export const ROLES = [
   'LEADER_CAM_ROLE',
   'SUPERVISOR_ROLE',
   'AUDITOR_ROLE',
-  'APOYO_DIRECCION_ROLE'
+  'APOYO_DIRECCION_ROLE',
+  'APOYO_VP_ROLE'
 ]
 
 @Component({

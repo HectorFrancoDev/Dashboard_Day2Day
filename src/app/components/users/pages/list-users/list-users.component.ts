@@ -88,6 +88,10 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
         // Si es director de Colombia
         else if (this.userRole === 'APOYO_DIRECCION_ROLE')
           this.usersData = users.users.filter((u) => u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'APOYO_DIRECCION_ROLE');
+        
+          // Si es director de Colombia
+        else if (this.userRole === 'APOYO_VP_ROLE')
+          this.usersData = users.users.filter((u) => u.role.code !== 'VP_ROLE');
 
         // Jefe Nelson Gamba
         else if (this.userRole === 'LEADER_ROLE' && this.userArea === '2') {
@@ -196,6 +200,9 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
     else if (this.userRole === 'APOYO_DIRECCION_ROLE')
       this.router.navigate(['/apoyo-direccion/users/' + id]);
 
+    else if (this.userRole === 'APOYO_VP_ROLE')
+      this.router.navigate(['/apoyo-vp/users/' + id]);
+
     else
       this.router.navigate(['/vicepresident/users/' + id]);
 
@@ -217,6 +224,9 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
 
     else if (this.userRole === 'APOYO_DIRECCION_ROLE')
       this.router.navigate(['/apoyo-direccion/users/performance/' + id]);
+
+    else if (this.userRole === 'APOYO_VP_ROLE')
+      this.router.navigate(['/apoyo-vp/users/performance/' + id]);
 
     else
       this.router.navigate(['/vicepresident/users/performance/' + id]);

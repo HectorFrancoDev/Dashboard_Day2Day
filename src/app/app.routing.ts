@@ -72,9 +72,19 @@ const routes: Routes = [
     }]
   },
 
-  // auditor
+  // Apoyo Dirección
   {
     path: 'apoyo-direccion',
+    component: GeneralLayoutComponent,
+    children: [{
+      path: '',
+      loadChildren: () => import('./modules/general/general.module').then(m => m.GeneralModule)
+    }]
+  },
+
+  // Apoyo VP
+  {
+    path: 'apoyo-vp',
     component: GeneralLayoutComponent,
     children: [{
       path: '',

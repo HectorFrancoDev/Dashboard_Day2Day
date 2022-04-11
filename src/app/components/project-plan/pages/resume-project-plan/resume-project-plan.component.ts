@@ -130,9 +130,13 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
         }
 
         // Si es director de Colombia 
-        else if (this.userRole === 'APOYO_DIRECCION_ROLE' && this.userCountry === 'CO') {
+        else if (this.userRole === 'APOYO_DIRECCION_ROLE' && this.userCountry === 'CO') 
           this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === 'CO' && a.state);
-        }
+        
+        // Si es director de Colombia 
+        else if (this.userRole === 'APOYO_VP_ROLE' && this.userCountry === 'CO') 
+          this.specificActivities = activities.activities.filter((a) => !a.is_general && a.state);
+        
 
         else if (this.userRole === 'LEADER_CAM_ROLE')
           this.specificActivities = activities.activities.filter((a) => !a.is_general && a.company.country.code === this.userCountry && a.state);
@@ -303,6 +307,9 @@ export class ResumeProjectPlanComponent implements OnInit, AfterViewInit {
 
     else if (this.userRole === 'APOYO_DIRECCION_ROLE')
       this.router.navigate(['/apoyo-direccion/project-plan/activities/' + idActivity]);
+
+    else if (this.userRole === 'APOYO_VP_ROLE')
+      this.router.navigate(['/apoyo-vp/project-plan/activities/' + idActivity]);
 
     else
       this.router.navigate(['/vicepresident/project-plan/activities/' + idActivity]);

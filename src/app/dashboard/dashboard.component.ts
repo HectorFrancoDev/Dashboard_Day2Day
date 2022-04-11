@@ -502,7 +502,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         let reportes: TimeData[] = reports.reports.sort((a, b) =>
           new Date(b.date).getTime() - new Date(a.date).getTime()
         );
-        
+
         // Si es el vicepresidente
         if (this.userRole === 'VP_ROLE')
           reportes = reportes.filter((r) => r.user.role.code !== 'VP_ROLE');
@@ -519,10 +519,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         else if (this.userRole === 'DIRECTOR_ROLE')
           reportes = reportes.filter((r) => r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'VP_ROLE' &&
             r.user.role.code !== 'DIRECTOR_ROLE');
-            
+
         // Si es Apoyo de Dirección
         else if (this.userRole === 'APOYO_DIRECCION_ROLE')
-          reportes = reportes.filter((r) => r.user.area.country.code === 'CO' && r.user.area.code !== 9  && r.user.role.code !== 'APOYO_DIRECCION_ROLE');
+          reportes = reportes.filter((r) => r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'APOYO_DIRECCION_ROLE');
+
+        // Si es Apoyo de VP
+        else if (this.userRole === 'APOYO_VP_ROLE')
+          reportes = reportes.filter((r) => r.user.role.code !== 'VP_ROLE');
 
         // Jefe Nelson Gamba
         else if (this.userRole === 'LEADER_ROLE' && this.userArea === '2') {
@@ -817,11 +821,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
       if (report.state) {
 
-        if (!this.usersNamesHours.includes(report.user.name)) {
-          this.usersNamesHours.push(report.user.name);
+        if (!this.usersNamesHours.includes(report.user.email)) {
+          this.usersNamesHours.push(report.user.email);
           this.usersHours.push(report.hours);
         } else {
-          let user = this.usersNamesHours.indexOf(report.user.name);
+          let user = this.usersNamesHours.indexOf(report.user.email);
           this.usersHours[user] += report.hours;
         }
       }
@@ -896,6 +900,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private fillDetailTable(reports: TimeData[]) {
     this.detallesReportes = reports;
     this.dataSourceDetalles.data = this.detallesReportes;
+  }
+
+  private fillTableZeroHours(reports: TimeData[]) {
+
   }
 
 

@@ -70,6 +70,11 @@ export class GoogleLoginComponent implements OnInit {
               else if (res.user.role.code === 'APOYO_DIRECCION_ROLE')
                 this.router.navigate(['/apoyo-direccion']);
 
+              // Si es apoyo de dirección
+              else if (res.user.role.code === 'APOYO_VP_ROLE')
+                this.router.navigate(['/apoyo-vp']);
+
+
               // Si es un administrador lo mando a la ruta /admin
               else if (res.user.role.code === 'LEADER_ROLE')
                 this.router.navigate(['/leader']);
@@ -141,6 +146,10 @@ export class GoogleLoginComponent implements OnInit {
             // Si es apoyo de dirección
             else if (res.user.role.code === 'APOYO_DIRECCION_ROLE')
               this.router.navigate(['/apoyo-direccion']);
+
+            // Si es apoyo de dirección
+            else if (res.user.role.code === 'APOYO_VP_ROLE')
+              this.router.navigate(['/apoyo-vp']);
 
             // Si es un administrador lo mando a la ruta /admin
             else if (res.user.role.code === 'LEADER_ROLE')
