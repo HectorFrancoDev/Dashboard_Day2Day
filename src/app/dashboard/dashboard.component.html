@@ -130,7 +130,6 @@
 
         </div>
 
-
         <div class="row">
             <div class="col-12">
                 <mat-tab-group mat-align-tabs="center">
@@ -148,12 +147,12 @@
                                             <div class="card-icon">
                                                 <i class="material-icons">functions</i>
                                             </div>
-                                            <p class="card-category">Horas trabajadas en total</p>
+                                            <p class="card-category">Horas ejecutadas en total</p>
                                             <h3 class="card-title">{{horasTrabajadasEnTotal | number : '1.2-2' }}</h3>
                                         </div>
                                         <div class="card-footer">
                                             <div class="stats">
-                                                <!-- Horas trabajadas en total -->
+
                                             </div>
                                         </div>
                                     </div>
@@ -260,6 +259,22 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- <div class="col-lg-6 col-md-6 col-s-12 col-sm-12">
+                                    <div class="card card-stats">
+                                        <div class="card-header card-header-danger card-header-icon">
+                                            <div class="card-icon">
+                                                <i class="material-icons">donut_large</i>
+                                            </div>
+                                            <div class="chart">
+                                                <canvas baseChart [data]="pieChartCategoriesData"
+                                                    [labels]="labelsPieChartCategories" [type]="pieChartCategoriesType"
+                                                    [options]="pieChartCategoriesOptions">
+                                                </canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
 
                                 <div class="col-lg-6 col-md-6 col-s-12 col-sm-12">
                                     <div class="card card-stats">
@@ -509,33 +524,34 @@
 
                             <div class="row">
 
-                                <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
+                                <!-- <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
 
                                     <div class="card card-stats">
                                         <div class="card-header card-header-info card-header-icon">
                                             <div class="card-icon">
                                                 <i class="material-icons">assignment</i>
                                             </div>
-                                            <p class="card-category">Auditorías vencidas a la fecha</p>
+                                            <p class="card-category">Auditorías vencidas en el corte - Open Pages</p>
                                             <h3 class="card-title">{{auditoriasVencidasRangoFecha }}</h3>
                                         </div>
                                         <div class="card-footer">
                                             <div class="stats">
-                                                <!-- Horas trabajadas en total -->
+
                                             </div>
                                         </div>
                                     </div>
 
-                                </div>
+                                </div> -->
 
-                                <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
+                                <!-- <div class="col-lg-3 col-md-3 col-s-12 col-sm-12"> -->
+                                <div class="col-lg-6 col-md-6 col-s-12 col-sm-12">
 
                                     <div class="card card-stats">
                                         <div class="card-header card-header-success card-header-icon">
                                             <div class="card-icon">
                                                 <i class="material-icons">fact_check</i>
                                             </div>
-                                            <p class="card-category">Auditorías igual o por encima del 100%</p>
+                                            <p class="card-category">Auditorías en sobreejecución</p>
                                             <h3 class="card-title">{{auditoriasVencidasArribaCien }}
                                             </h3>
                                         </div>
@@ -548,7 +564,8 @@
 
                                 </div>
 
-                                <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
+                                <!-- <div class="col-lg-3 col-md-3 col-s-12 col-sm-12"> -->
+                                <div class="col-lg-6 col-md-6 col-s-12 col-sm-12">
 
                                     <div class="card card-stats">
                                         <div class="card-header card-header-warning card-header-icon">
@@ -568,26 +585,26 @@
 
                                 </div>
 
-                                <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
+                                <!-- <div class="col-lg-3 col-md-3 col-s-12 col-sm-12">
 
                                     <div class="card card-stats">
                                         <div class="card-header card-header-warning card-header-icon">
                                             <div class="card-icon">
                                                 <i class="material-icons">task_alt</i>
                                             </div>
-                                            <p class="card-category">Efectividad</p>
-                                            <h3 class="card-title">{{auditoriasVencidasEfectividad | number : '1.2-2'
-                                                }}%
+                                            <p class="card-category">Auditorías abiertas - Open Pages</p>
+
+                                            <h3 class="card-title">{{auditoriasVencidasEfectividad }}
                                             </h3>
                                         </div>
                                         <div class="card-footer">
                                             <div class="stats">
-                                                <!-- Horas trabajadas en promedio -->
+                                                
                                             </div>
                                         </div>
                                     </div>
 
-                                </div>
+                                </div> -->
 
                             </div>
 
@@ -642,38 +659,38 @@
                                                 <mat-expansion-panel *ngFor="let item of avanceActividadesRealEsperado">
 
 
-                                                    <mat-expansion-panel-header class=""
-                                                        style="margin-top: 5px;">
+                                                    <mat-expansion-panel-header class="" style="margin-top: 5px;">
                                                         <span class="mat-cell">{{item.name}} </span>
                                                         <span class="mat-cell">{{item.fecha_cierre | date:"dd/MM/yyyy"}}
                                                         </span>
                                                         <span class="mat-cell">{{item.open_state}} </span>
-                                                        <span class="mat-cell">{{item.avance_actividades | number:'1.2-2'}}% </span>
+                                                        <span class="mat-cell">{{item.avance_actividades |
+                                                            number:'1.2-2'}}% </span>
                                                         <!-- <span mat-cell *matCellDef="let row" class="" [style.background-color]="item.semaforo" > </span> -->
                                                         <!-- <span class="mat-cell" [style.background-color]="item.semaforo"
                                                             style="width: 10px;"> </span> -->
                                                     </mat-expansion-panel-header>
 
                                                     <div>
-                                                    
+
                                                         <table class="table">
                                                             <thead>
-                                                              <tr>
-                                                                <th scope="col">País</th>
-                                                                <th scope="col">Empresa</th>
-                                                                <th scope="col">Horas Estimadas</th>
-                                                                <th scope="col">Horas Ejecutadas</th>
-                                                              </tr>
+                                                                <tr>
+                                                                    <th scope="col">País</th>
+                                                                    <th scope="col">Empresa</th>
+                                                                    <th scope="col">Horas Estimadas</th>
+                                                                    <th scope="col">Horas Ejecutadas</th>
+                                                                </tr>
                                                             </thead>
                                                             <tbody>
-                                                              <tr>
-                                                                <td>{{item.country}}</td>
-                                                                <td>{{item.company}}</td>
-                                                                <td>{{item.estimated_hours | number:'1.2-2'}}</td>
-                                                                <td>{{item.worked_hours | number:'1.2-2'}}</td>
-                                                              </tr>
+                                                                <tr>
+                                                                    <td>{{item.country}}</td>
+                                                                    <td>{{item.company}}</td>
+                                                                    <td>{{item.estimated_hours | number:'1.2-2'}}</td>
+                                                                    <td>{{item.worked_hours | number:'1.2-2'}}</td>
+                                                                </tr>
                                                             </tbody>
-                                                          </table>
+                                                        </table>
 
                                                     </div>
 
@@ -803,6 +820,15 @@
                                                 </th>
                                                 <td mat-cell *matCellDef="let row" class="primeraColumna">
                                                     {{row.date | date:"dd/MM/yyyy"}}
+                                                </td>
+                                            </ng-container>
+
+                                            <!-- Column -->
+                                            <ng-container matColumnDef="user">
+                                                <th mat-header-cell *matHeaderCellDef class="segundaColumna">
+                                                    Usuario </th>
+                                                <td mat-cell *matCellDef="let row" class="segundaColumna">
+                                                    {{row.user.name }}
                                                 </td>
                                             </ng-container>
 

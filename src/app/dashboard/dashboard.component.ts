@@ -222,6 +222,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   labelsPieChartCompanies: string[] = [];
   dataPieChartCompanies: number[] = [];
 
+  // Pie Chart data (Categories)
+  labelsPieChartCategories: string[] = [];
+  dataPieChartCategories: number[] = [];
+
   horasTrabajadasEnTotal = 0;
   horasTrabajadasEnPromedio = 0;
 
@@ -245,7 +249,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   dataSourceTopNoCompletados: MatTableDataSource<any>;
 
   // Tabla detalles actividades
-  displayedColumnDetalles: string[] = ['date', 'activity', 'hours', 'detail'];
+  displayedColumnDetalles: string[] = ['date', 'user', 'activity', 'hours', 'detail'];
   dataSourceDetalles: MatTableDataSource<TimeData>;
 
   // Tabla Planeado vs Real
@@ -398,7 +402,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       },
       title: {
         display: true,
-        text: 'Horas trabajadas por actividad'
+        text: 'Horas empleadas por actividad'
       }
     }
   };
@@ -429,12 +433,43 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       },
       title: {
         display: true,
-        text: 'Horas trabajadas por empresa'
+        text: 'Horas empleadas por empresa'
       }
     }
   };
 
   public pieChartCompaniesData: ChartData<'doughnut', number[], string | string[]> = {
+
+    labels: [''],
+    datasets: [
+      {
+        data: [0],
+        backgroundColor: this.paletaDeColores,
+        hoverBackgroundColor: this.paletaDeColores,
+        borderWidth: 0
+      }
+    ]
+  };
+
+
+  // Pie Chart (COMAPNIES)
+  public pieChartCategoriesType: ChartType = 'doughnut';
+
+  public pieChartCategoriesOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom'
+      },
+      title: {
+        display: true,
+        text: 'Horas empleadas por categoría'
+      }
+    }
+  };
+
+  public pieChartCategoriesData: ChartData<'doughnut', number[], string | string[]> = {
 
     labels: [''],
     datasets: [
@@ -594,6 +629,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.generatePieChartActivities(this.currentMonthData);
         // Generar el Pie Chart
         this.generatePieChartCompanies(this.currentMonthData);
+        // Generar el Pie Chart
+        // this.generatePieChartCategories(this.currentMonthData);
 
         // setTimeout(() => this.mostrarGraficas = true, 5000);
         this.mostrarGraficas = true;
@@ -811,6 +848,56 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     // this.generateBackgroundColors();
   }
 
+  private generatePieChartCategories(reports: TimeData[]) {
+
+    this.labelsPieChartCategories = [];
+    this.dataPieChartCategories = [];
+
+    reports.forEach((report: TimeData) => {
+
+      if (report.state) {
+
+        if (report.activity.category !== undefined || report.activity.category !== null) {
+
+          if (!this.labelsPieChartCategories.includes(report.activity.company.name)) {
+            this.labelsPieChartCategories.push(report.activity.company.name);
+            this.dataPieChartCategories.push(report.hours);
+          } else {
+            let category = this.labelsPieChartCategories.indexOf(report.activity.company.name);
+            this.dataPieChartCategories[category] += report.hours;
+          }
+
+        }
+
+      }
+
+    });
+
+    let arrayOfObj = this.labelsPieChartCategories.map((d, i) => {
+
+      return {
+        label: d,
+        data: this.dataPieChartCategories[i] || 0
+      };
+
+    });
+
+    let sortedArrayOfObj = arrayOfObj.sort((a, b) => b.data - a.data);
+
+    let newArrayLabel = [];
+    let newArrayData = [];
+
+    sortedArrayOfObj.forEach((d) => {
+      newArrayLabel.push(d.label);
+      newArrayData.push(d.data);
+    });
+
+
+    this.pieChartCategoriesData.labels = newArrayLabel;
+    this.pieChartCategoriesData.datasets[0].data = newArrayData
+
+  }
+
   private fillAuditorHoursTable(reports: TimeData[]) {
 
     this.dataAuditorHoras = [];
@@ -947,6 +1034,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.auditoriasVencidasRangoFecha = cerradasEsteMes.length;
     this.auditoriasVencidasMenosCien = cerradasEsteMes.filter((a) => a.worked_hours < a.estimated_hours).length;
     this.auditoriasVencidasArribaCien = cerradasEsteMes.filter((a) => a.worked_hours >= a.estimated_hours).length;
+    // this.auditoriasVencidasEfectividad = (this.auditoriasVencidasArribaCien / this.auditoriasVencidasRangoFecha) * 100;
     this.auditoriasVencidasEfectividad = (this.auditoriasVencidasArribaCien / this.auditoriasVencidasRangoFecha) * 100;
 
 
@@ -981,6 +1069,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       });
 
     });
+
 
     console.log(this.avanceActividadesRealEsperado);
 
@@ -1041,6 +1130,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.generatePieChartActivities(this.filtereMonthData);
     // Generar el Pie Chart
     this.generatePieChartCompanies(this.filtereMonthData);
+    // Generar el Pie Chart
+    this.generatePieChartCategories(this.filtereMonthData);
+
 
     // this.mostrarGraficas = true;
     setTimeout(() => this.mostrarGraficas = true, 500);
@@ -1091,6 +1183,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.generatePieChartActivities(this.filtereMonthData);
     // Generar el Pie Chart
     this.generatePieChartCompanies(this.filtereMonthData);
+    // Generar el Pie Chart
+    this.generatePieChartCategories(this.filtereMonthData);
 
     // this.mostrarGraficas = true;
     setTimeout(() => this.mostrarGraficas = true, 500);
@@ -1135,6 +1229,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.generatePieChartActivities(this.filtereMonthData);
     // Generar el Pie Chart
     this.generatePieChartCompanies(this.filtereMonthData);
+    // Generar el Pie Chart
+    this.generatePieChartCategories(this.filtereMonthData);
 
     setTimeout(() => this.mostrarGraficas = true, 500);
 
@@ -1196,6 +1292,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.generatePieChartActivities(this.filtereMonthData);
     // Generar el Pie Chart
     this.generatePieChartCompanies(this.filtereMonthData);
+    // Generar el Pie Chart
+    this.generatePieChartCategories(this.filtereMonthData);
 
     // this.mostrarGraficas = true;
     setTimeout(() => this.mostrarGraficas = true, 500);
@@ -1233,6 +1331,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.generatePieChartActivities(this.filtereMonthData);
     // Generar el Pie Chart
     this.generatePieChartCompanies(this.filtereMonthData);
+    // Generar el Pie Chart
+    this.generatePieChartCategories(this.filtereMonthData);
 
     // this.mostrarGraficas = true;
     setTimeout(() => this.mostrarGraficas = true, 500);
@@ -1453,6 +1553,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           this.generatePieChartActivities(this.currentMonthData);
           // Generar el Pie Chart
           this.generatePieChartCompanies(this.currentMonthData);
+          // Generar el Pie Chart
+          this.generatePieChartCategories(this.currentMonthData);
 
           // setTimeout(() => this.mostrarGraficas = true, 5000);
           this.mostrarGraficas = true;
@@ -1598,6 +1700,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.generatePieChartActivities(this.currentMonthData);
         // Generar el Pie Chart
         this.generatePieChartCompanies(this.currentMonthData);
+        // Generar el Pie Chart
+        this.generatePieChartCategories(this.currentMonthData);
 
 
         this.mostrarGraficas = true;

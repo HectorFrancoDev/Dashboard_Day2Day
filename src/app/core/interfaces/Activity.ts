@@ -1,4 +1,6 @@
+import { CategoryScale } from "chart.js";
 import { Area } from "./Area";
+import { Category } from "./Category";
 import { Company } from "./Company";
 
 export interface Activity {
@@ -12,7 +14,8 @@ export interface Activity {
     worked_hours: number;
     is_general: boolean;
     users?: [SortUser];
-    state?: boolean
+    state?: boolean;
+    category?: Category;
 }
 
 
