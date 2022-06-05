@@ -1,0 +1,28 @@
+<div class="main-content">
+    <div class="container-fluid">
+
+        <div class="row-12">
+
+            <div class="row ml-1 md-6 justify-content-center">
+                <h4>
+                    <img md-fab-image class="user-fab" [src]="userImg">
+                    {{ user.name }}
+                </h4>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="row ml-1 md-6 justify-content-center">
+                <h4>Reporte de la semana en curso. Puedes cambiar el rango de fecha del reporte abajo</h4>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12" style="width: 100%;">
+                    <app-graphs [idUser]="idUser"></app-graphs>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

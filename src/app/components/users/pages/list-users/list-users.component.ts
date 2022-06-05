@@ -33,8 +33,9 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
   public userId = localStorage.getItem('idUser');
 
   public poseePermisos: boolean = false;
+  public puedeEditar: boolean = false;
 
-  displayedColumns: string[] = ['image-avatar', 'email', 'name', 'country', 'role', 'actions', 'actions-2'];
+  displayedColumns: string[] = ['image-avatar', 'email', 'name', 'country', 'role', 'actions', 'actions-2', 'actions-3'];
   dataSource: MatTableDataSource<GeneralUser>;
   private usersData: GeneralUser[] = [];
 
@@ -51,6 +52,11 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
 
     if (this.userRole !== 'SUPERVISOR_ROLE' && this.userRole !== 'AUDITOR_ROLE')
       this.poseePermisos = true;
+
+
+    if (this.userRole === 'LEADER_ROLE' || this.userRole === 'LEADER_CAM_ROLE')
+      this.puedeEditar = true;
+
   }
 
   ngOnInit(): void {
@@ -88,8 +94,8 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
         // Si es director de Colombia
         else if (this.userRole === 'APOYO_DIRECCION_ROLE')
           this.usersData = users.users.filter((u) => u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'APOYO_DIRECCION_ROLE');
-        
-          // Si es director de Colombia
+
+        // Si es director de Colombia
         else if (this.userRole === 'APOYO_VP_ROLE')
           this.usersData = users.users.filter((u) => u.role.code !== 'VP_ROLE');
 
@@ -231,4 +237,19 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
     else
       this.router.navigate(['/vicepresident/users/performance/' + id]);
   }
+
+  editUser(id: string) {
+
+
+    if (this.userRole === 'LEADER_ROLE')
+      this.router.navigate(['/leader/users/performance/' + id]);
+
+    else if (this.userRole === 'LEADER_CAM_ROLE')
+      this.router.navigate(['/leader-cam/users/performance/' + id]);
+
+    else
+      return
+
+  }
+
 }

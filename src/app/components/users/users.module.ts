@@ -12,6 +12,7 @@ import { MaterialModule } from '../material/material.module';
 import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentsModule } from '../components.module';
+import { EditUserComponent } from './pages/edit-user/edit-user.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { ComponentsModule } from '../components.module';
     ListUsersComponent,
     AsignActivityUserComponent,
     PerformanceUserComponent,
-    CreateUserComponent
+    CreateUserComponent,
+    EditUserComponent
   ],
   imports: [
     CommonModule,

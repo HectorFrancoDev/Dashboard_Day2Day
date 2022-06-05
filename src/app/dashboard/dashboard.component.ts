@@ -209,6 +209,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Line Chart data
   labelsLineChart: string[] = [];
   dataLineChart: number[] = [];
+  dataLineChartPresupuestado: number[] = [];
 
   // Line Chart data Jefatura
   labelsLineChartJefatura: string[] = [];
@@ -295,19 +296,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         pointRadius: 5,
         pointHoverRadius: 10,
         tension: 0.1
+      },
+      {
+        type: 'line',
+        data: [0],
+        label: 'Horas estimadas',
+        backgroundColor: '#d13917',
+        borderColor: '#d13917',
+        pointBorderWidth: 0,
+        pointRadius: 0,
+        tension: 0.1
       }
-      // {
-      //   // type: 'bar',
-      //   data: [0],
-      //   label: 'Mes actual',
-      //   hoverBackgroundColor: '#005d8c',
-      //   pointBackgroundColor: '#cc222b',
-      //   pointHoverBorderColor: '#cc222b',
-      //   pointBorderWidth: 2,
-      //   pointRadius: 5,
-      //   pointHoverRadius: 10,
-      //   tension: 0.1
-      // },
     ]
   };
 
@@ -535,7 +534,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
         // Organizar reportes del más reciente al más antiguo
         let reportes: TimeData[] = reports.reports.sort((a, b) =>
-          new Date(b.date).getTime() - new Date(a.date).getTime()
+          new Date(a.date).getTime() - new Date(b.date).getTime()
         );
 
         // Si es el vicepresidente
@@ -630,7 +629,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         // Generar el Pie Chart
         this.generatePieChartCompanies(this.currentMonthData);
         // Generar el Pie Chart
-        // this.generatePieChartCategories(this.currentMonthData);
+        this.generatePieChartCategories(this.currentMonthData);
 
         // setTimeout(() => this.mostrarGraficas = true, 5000);
         this.mostrarGraficas = true;
@@ -699,8 +698,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.horasTrabajadasEnPromedio = (this.horasTrabajadasEnTotal / dataLineChart.length);
     this.horasTrabajadasEnPromedioArea = (this.horasTrabajadasEnPromedio / this.dataLineChartUsers.length);
 
+
+    // console.log('USERS: ', this.dataLineChartUsers.length);
+
+    // Formatear las horas estimadas
+    for (let index = 0; index < reports.length; index++) {
+
+      this.dataLineChartPresupuestado.push(this.dataLineChartUsers.length * 8);
+    }
+
     lineChartData.labels = labelsLineChart;
     lineChartData.datasets[0].data = dataLineChart;
+
+
+    lineChartData.datasets[1].data = this.dataLineChartPresupuestado;
 
   }
 
@@ -809,8 +820,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     reports.forEach((report: TimeData) => {
 
       if (report.state) {
-
-        if (!this.labelsPieChartCompanies.includes(report.activity.company.name)) {
+        if (!this.labelsPieChartCompanies.includes(report.activity.company.name) && report.activity.company.name !== 'Otros Conceptos - General') {
           this.labelsPieChartCompanies.push(report.activity.company.name);
           this.dataPieChartCompanies.push(report.hours);
         } else {
@@ -853,21 +863,111 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.labelsPieChartCategories = [];
     this.dataPieChartCategories = [];
 
-    reports.forEach((report: TimeData) => {
+    let reportes = reports;
+
+
+    for (let i = 0; i < reportes.length; i++) {
+      if (reportes[i].state) {
+
+        if (reportes[i].activity.name == 'Pausas Activas') {
+          reportes[i].activity.category = { code: 4, name: 'Pausas Activas' };
+        }
+        else if
+          (reportes[i].activity.name == 'Señal Familia' ||
+          reportes[i].activity.name == 'Cursos Internos' ||
+          reportes[i].activity.name == 'Conexión 20/22') {
+          reportes[i].activity.category = { code: 2, name: 'Cursos' };
+        }
+
+        else if
+          (reportes[i].activity.name == 'Day 2 Day') {
+          reportes[i].activity.category = { code: 7, name: 'Proyectos' };
+        }
+
+        else if
+          (reportes[i].activity.name == 'Seguimiento Administrativo' ||
+          reportes[i].activity.name == 'BSC' ||
+          reportes[i].activity.name == 'Evaluación objetivos' ||
+          reportes[i].activity.name == 'Conectados' ||
+          reportes[i].activity.name == 'Cargue objetivos y planes de acción') {
+          reportes[i].activity.category = { code: 6, name: 'PiPol' };
+        }
+
+        else if
+          (reportes[i].activity.name == 'Apoyo Jefatura' ||
+          reportes[i].activity.name == 'Apoyo Dirección') {
+          reportes[i].activity.category = { code: 5, name: 'Apoyo' };
+        }
+
+        else if
+          (reportes[i].activity.name == 'Planes de Acción') {
+          reportes[i].activity.category = { code: 8, name: 'Planes de Acción' };
+        }
+
+        else if
+          (reportes[i].activity.name == 'Innovación') {
+          reportes[i].activity.category = { code: 9, name: 'Innovación' };
+        }
+
+        else if
+          (reportes[i].activity.name == 'Innovación') {
+          reportes[i].activity.category = { code: 9, name: 'Innovación' };
+        }
+
+        else if
+          (reportes[i].activity.name == 'Requerimientos Entes de control') {
+          reportes[i].activity.category = { code: 11, name: 'Entes de control' };
+        }
+
+
+        else if
+          (reportes[i].activity.name == 'Incidentes' ||
+          reportes[i].activity.name == 'Atención de Inicidentes' ||
+          reportes[i].activity.name.includes('INC')) {
+          reportes[i].activity.category = { code: 10, name: 'Incidentes' };
+        }
+
+        else if
+          (reportes[i].activity.name == 'Daño Equipo / Soporte IBM' ||
+          reportes[i].activity.name == 'Entregas de Cargo / Inducción / Concursos internos') {
+          reportes[i].activity.category = { code: 3, name: 'Soportes' };
+        }
+
+        else if
+          (reportes[i].activity.name == 'Vacaciones' ||
+          reportes[i].activity.name == 'Incapacidad' ||
+          reportes[i].activity.name == 'Lactancia Materna' ||
+          reportes[i].activity.name == 'Licencia Luto' ||
+          reportes[i].activity.name == 'Licencia Maternidad' ||
+          reportes[i].activity.name == 'Licencia Matrimonio' ||
+          reportes[i].activity.name == 'Licencia por Cumpleaños' ||
+          reportes[i].activity.name == 'Permiso Personal'
+        ) {
+          reportes[i].activity.category = { code: 1, name: 'Ausentismos' };
+        }
+
+        else {
+          reportes[i].activity.category = { code: 12, name: 'Auditorías' };
+        }
+      }
+    }
+
+    reportes.forEach((report: TimeData) => {
 
       if (report.state) {
 
-        if (report.activity.category !== undefined || report.activity.category !== null) {
+        // if (report.activity.category !== undefined || report.activity.category !== null) {
 
-          if (!this.labelsPieChartCategories.includes(report.activity.company.name)) {
-            this.labelsPieChartCategories.push(report.activity.company.name);
-            this.dataPieChartCategories.push(report.hours);
-          } else {
-            let category = this.labelsPieChartCategories.indexOf(report.activity.company.name);
-            this.dataPieChartCategories[category] += report.hours;
-          }
+        if (!this.labelsPieChartCategories.includes(report.activity.category.name)) {
 
+          this.labelsPieChartCategories.push(report.activity.category.name);
+          this.dataPieChartCategories.push(report.hours);
+        } else {
+          let category = this.labelsPieChartCategories.indexOf(report.activity.category.name);
+          this.dataPieChartCategories[category] += report.hours;
         }
+
+        // }
 
       }
 
@@ -1071,7 +1171,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
 
 
-    console.log(this.avanceActividadesRealEsperado);
+    // console.log(this.avanceActividadesRealEsperado);
 
     this.dataSourceAvanceActividades.data = this.avanceActividadesRealEsperado.sort((a, b) => b.avance_actividades - a.avance_actividades);
   }
@@ -1263,6 +1363,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     // Line Chart data
     this.labelsLineChart = [];
     this.dataLineChart = [];
+    this.dataLineChartPresupuestado = [];
     this.generateLineChart(this.filtereMonthData, this.lineChartData, this.labelsLineChart, this.dataLineChart);
 
     // Line Chart data Jefatura
@@ -1320,6 +1421,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     // Line Chart data
     this.labelsLineChart = [];
     this.dataLineChart = [];
+    this.dataLineChartPresupuestado = [];
     this.generateLineChart(this.filtereMonthData, this.lineChartData, this.labelsLineChart, this.dataLineChart);
 
     this.dataSourceAuditorHours.data = [];
@@ -1463,7 +1565,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
           // Organizar reportes del más reciente al más antiguo
           let reportes: TimeData[] = reports.reports.sort((a, b) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime()
+            new Date(a.date).getTime() - new Date(b.date).getTime()
           );
 
 
@@ -1604,7 +1706,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
         // Organizar reportes del más reciente al más antiguo
         let reportes: TimeData[] = reports.reports.sort((a, b) =>
-          new Date(b.date).getTime() - new Date(a.date).getTime()
+          new Date(a.date).getTime() - new Date(b.date).getTime()
         );
 
 
@@ -1707,7 +1809,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.mostrarGraficas = true;
 
       },
-        (error) => this.notificationService.showNotificationError(error)
+        (error) => {
+          this.notificationService.showNotificationError(error);
+          console.log(error);
+        }
       );
 
 
