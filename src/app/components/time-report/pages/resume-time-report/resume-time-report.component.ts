@@ -133,7 +133,8 @@ export class ResumeTimeReportComponent implements OnInit {
   loadData() {
 
     const rangeTime: RangeTime = {
-      start: this.getMonday(new Date),
+      // start: this.getMonday(new Date),
+      start: this.getFirstDayMonth(new Date),
       // start: new Date(),
       end: moment(new Date()).add(1, 'days').toDate()
     };
@@ -386,6 +387,17 @@ export class ResumeTimeReportComponent implements OnInit {
     let diff = currentDate.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
     // Retorna el día lunes en formato fecha
     return new Date(currentDate.setDate(diff));
+  }
+
+
+  getFirstDayMonth(date: Date) {
+
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    const day = 1;
+
+    return new Date(year, month, day);
+
   }
 
 

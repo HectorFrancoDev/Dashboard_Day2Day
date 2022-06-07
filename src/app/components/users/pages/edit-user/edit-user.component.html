@@ -12,15 +12,16 @@
 
             <mat-divider></mat-divider>
 
-            <div class="row ml-1 md-6 justify-content-center">
-                <h4>Reporte de la semana en curso. Puedes cambiar el rango de fecha del reporte abajo</h4>
-            </div>
-
             <div class="row">
-                <div class="col-12 col-md-12" style="width: 100%;">
-                    <app-graphs [idUser]="idUser"></app-graphs>
+                <div class="col-lg-6 col-md-12 col-sm-6">
+                    <button mat-raised-button color="primary" class="btn btn-round btn-large btn-success"
+                    (click)="openDialog()" >
+                        Agregar ausentismo
+                        <mat-icon>beach_access</mat-icon>
+                    </button>
                 </div>
             </div>
+
 
         </div>
 

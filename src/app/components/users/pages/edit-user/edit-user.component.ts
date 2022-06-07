@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResponseGetUserById } from 'app/core/interfaces/ResponseGetUserById';
+import { TimeData } from 'app/core/interfaces/TimeData';
 import { User } from 'app/core/interfaces/User';
 import { NotificationsService } from 'app/core/services/notifications/notifications.service';
 import { UsersService } from '../../services/users.service';
+import { AddAusentismoComponent } from '../add-ausentismo/add-ausentismo.component';
 
 @Component({
   selector: 'app-edit-user',
@@ -36,11 +39,14 @@ export class EditUserComponent implements OnInit {
 
   userImg = 'assets/img/user_img.png';
 
+  private data = {}
+
   constructor(
     private userService: UsersService,
     private activatedRoute: ActivatedRoute,
     private notificationService: NotificationsService,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -65,12 +71,44 @@ export class EditUserComponent implements OnInit {
   getUserById(id: string) {
     this.userService.getUserById(id).subscribe(
       (user: ResponseGetUserById) => {
-        console.log(user);
         this.userImg = user.user.img;
         this.user = user.user;
       },
       (error) => this.notificationService.showNotificationError(error)
     );
+  }
+
+
+
+  openDialog(): void {
+
+    const dialogRef = this.dialog.open(AddAusentismoComponent, {
+      width: '60%',
+      data: this.data
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+
+      if (result) {
+
+        result.user = this.activatedRoute.snapshot.paramMap.get('id');
+
+        this.userService.createAusentismos(result)
+          .subscribe((data) => {
+            this.notificationService.showNotificationSuccess('Ausentismo creado correctamente!');
+            console.log(data);
+          }, (error) => {
+            console.log(error);
+          });
+
+
+        console.log(result);
+
+
+      }
+
+    });
+
   }
 
 

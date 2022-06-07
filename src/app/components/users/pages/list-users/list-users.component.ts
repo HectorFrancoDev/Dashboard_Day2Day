@@ -242,10 +242,10 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
 
 
     if (this.userRole === 'LEADER_ROLE')
-      this.router.navigate(['/leader/users/performance/' + id]);
+      this.router.navigate(['/leader/users/edit/' + id]);
 
     else if (this.userRole === 'LEADER_CAM_ROLE')
-      this.router.navigate(['/leader-cam/users/performance/' + id]);
+      this.router.navigate(['/leader-cam/users/edit/' + id]);
 
     else
       return

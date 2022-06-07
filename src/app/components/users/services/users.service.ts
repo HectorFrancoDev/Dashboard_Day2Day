@@ -29,4 +29,8 @@ export class UsersService {
     return this.http.get<ResponseGetUserById>(`${environment.API_URL}/users/${id}`);
   }
 
+  createAusentismos(data: any){
+    return this.http.post(`${environment.API_URL}/reports/ausentismos`, data)
+  }
+
 }

@@ -13,6 +13,7 @@ import { CreateUserComponent } from './pages/create-user/create-user.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentsModule } from '../components.module';
 import { EditUserComponent } from './pages/edit-user/edit-user.component';
+import { AddAusentismoComponent } from './pages/add-ausentismo/add-ausentismo.component';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { EditUserComponent } from './pages/edit-user/edit-user.component';
     AsignActivityUserComponent,
     PerformanceUserComponent,
     CreateUserComponent,
-    EditUserComponent
+    EditUserComponent,
+    AddAusentismoComponent
   ],
   imports: [
     CommonModule,

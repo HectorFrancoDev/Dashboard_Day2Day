@@ -66,7 +66,6 @@ export class PerformanceUserComponent implements OnInit {
   getUserById(id: string) {
     this.userService.getUserById(id).subscribe(
       (user: ResponseGetUserById) => {
-        console.log(user);
         this.userImg = user.user.img;
         this.user = user.user;
       },
