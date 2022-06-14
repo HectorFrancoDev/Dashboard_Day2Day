@@ -10,7 +10,8 @@
                 <mat-form-field appearance="fill" class="inputs">
                     <mat-label>Seleccionar Actividad</mat-label>
                     <mat-select [(ngModel)]="data.activity">
-                        <mat-option *ngFor="let activity of activities_2" [value]="activity.id"style="font-size: 10px;">
+                        <mat-option *ngFor="let activity of activities_2" [value]="activity.id"
+                            style="font-size: 10px;">
 
                             {{activity.name}}
 

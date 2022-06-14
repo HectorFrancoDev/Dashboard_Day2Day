@@ -78,8 +78,6 @@ export class EditUserComponent implements OnInit {
     );
   }
 
-
-
   openDialog(): void {
 
     const dialogRef = this.dialog.open(AddAusentismoComponent, {
@@ -91,19 +89,13 @@ export class EditUserComponent implements OnInit {
 
       if (result) {
 
+        // setear el id del usuario a result.user
         result.user = this.activatedRoute.snapshot.paramMap.get('id');
 
-        this.userService.createAusentismos(result)
-          .subscribe((data) => {
-            this.notificationService.showNotificationSuccess('Ausentismo creado correctamente!');
-            console.log(data);
-          }, (error) => {
-            console.log(error);
-          });
-
-
-        console.log(result);
-
+        this.userService.createAusentismos(result).subscribe(
+          (data) => { this.notificationService.showNotificationSuccess('Ausentismo creado correctamente!'); },
+          (error) => { this.notificationService.showNotificationError('Hubo un error interno, por favor comuniquese con el administrador'); }
+        );
 
       }
 

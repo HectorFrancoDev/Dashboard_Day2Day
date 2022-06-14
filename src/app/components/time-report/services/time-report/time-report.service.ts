@@ -68,6 +68,24 @@ export class TimeReportService {
   }
 
   /**
+   * crear un nuevo registro en el time report del usuario.
+   * @param timeData 
+   */
+  createTimeDataCelulas(timeData: TimeData) {
+    const { edit, titleDialog, checked, ...data } = timeData;
+    return this.http.post(`${environment.API_URL}/reports/celulas`, data);
+  }
+
+  /**
+   * crear un nuevo registro en el time report del usuario.
+   * @param timeData 
+   */
+  getActivityById(id: string) {
+    // const { edit, titleDialog, checked, ...data } = timeData;
+    return this.http.get(`${environment.API_URL}/activities/${id}`);
+  }
+
+  /**
    * Edita un registro del time report.
    * @param timeData 
    */
@@ -77,11 +95,28 @@ export class TimeReportService {
   }
 
   /**
+   * Edita un registro del time report.
+   * @param timeData 
+   */
+  editTimeDataCelulas(timeData: TimeData) {
+    const { edit, titleDialog, checked, id, ...data } = timeData;
+    return this.http.put(`${environment.API_URL}/reports/celulas/${id}`, data);
+  }
+
+  /**
    * Elimina un registro del time report.
    * @param id Identificador de la información a borrar
    */
   deleteTimeData(id: string) {
     return this.http.delete(`${environment.API_URL}/reports/${id}`);
+  }
+
+  /**
+   * Elimina un registro del time report.
+   * @param id Identificador de la información a borrar
+   */
+  deleteTimeDataCelulas(id: string) {
+    return this.http.delete(`${environment.API_URL}/reports/celulas/${id}`);
   }
 
   /**
