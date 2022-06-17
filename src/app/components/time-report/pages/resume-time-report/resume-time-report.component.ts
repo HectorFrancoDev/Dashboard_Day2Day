@@ -216,6 +216,11 @@ export class ResumeTimeReportComponent implements OnInit {
         const checkData = this.verifyTimeData(result);
         if (checkData) {
 
+          if (!result.activity.match(/^[0-9a-fA-F]{24}$/)) {
+            this.notificationService.showNotificationError('No fue posible crear el registro, revisa los datos ingresados')
+            return;
+          }
+
           this.userTimeReportService.getActivityById(result.activity).subscribe(
 
             (activity: ResponseActivity) => {

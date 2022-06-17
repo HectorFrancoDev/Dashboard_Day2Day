@@ -98,11 +98,13 @@ export class GoogleLoginComponent implements OnInit {
             }
 
           } catch (error) {
-            this.notificationService.showNotificationError(error);
+            this.notificationService.showNotificationError('Login no disponible, hablar con el administrador');
           }
-
+          
         },
-        error => console.log(error)
+        error => {
+          this.notificationService.showNotificationError('No fue posible obtener tu sesión pasada, habla con el administrador');
+        }
       );
     }
   }
@@ -174,12 +176,14 @@ export class GoogleLoginComponent implements OnInit {
           }
 
         } catch (error) {
-          this.notificationService.showNotificationError(error);
+          this.notificationService.showNotificationError('No fue posible hacer login, hablar con el administrador');
         }
 
       },
 
-      (error) => this.notificationService.showNotificationError(error.error.error)
+      (error) => {
+        this.notificationService.showNotificationError('Hay un problema de inicio de sesión, hablar con el administrador');
+      }
     );
 
   }
