@@ -38,7 +38,7 @@ export class AddReportComponent implements OnInit {
 
   loadData() {
 
-    this.userTimeReportService.getAllActivitiesFromUser().subscribe(
+    this.userTimeReportService.getAllActivitiesFromUserSpecific().subscribe(
 
       (activities) => {
 

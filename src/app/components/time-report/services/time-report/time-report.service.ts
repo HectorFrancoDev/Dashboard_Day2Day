@@ -129,6 +129,10 @@ export class TimeReportService {
     return this.http.patch(`${environment.API_URL}/reports/massive`, data);
   }
 
+  getAllActivitiesFromUserSpecific(): Observable<ResponseUserActivities> {
+    return this.http.post<ResponseUserActivities>(`${environment.API_URL}/activities/specific`,{});
+  }
+
   getAllActivitiesFromUser(): Observable<ResponseUserActivities> {
     return this.http.post<ResponseUserActivities>(`${environment.API_URL}/activities/ausentismos`,{});
   }
