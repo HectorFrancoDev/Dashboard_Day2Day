@@ -130,7 +130,7 @@ export class TimeReportService {
   }
 
   getAllActivitiesFromUser(): Observable<ResponseUserActivities> {
-    return this.http.post<ResponseUserActivities>(`${environment.API_URL}/activities/specific`, {});
+    return this.http.post<ResponseUserActivities>(`${environment.API_URL}/activities/ausentismos`,{});
   }
 
 }

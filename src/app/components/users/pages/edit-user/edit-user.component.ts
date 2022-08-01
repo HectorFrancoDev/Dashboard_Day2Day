@@ -90,7 +90,7 @@ export class EditUserComponent implements OnInit {
       if (result) {
 
         // setear el id del usuario a result.user
-        result.user = this.activatedRoute.snapshot.paramMap.get('id');
+        result.user = this.idUser ;
 
         this.userService.createAusentismos(result).subscribe(
           (data) => { this.notificationService.showNotificationSuccess('Ausentismo creado correctamente!'); },

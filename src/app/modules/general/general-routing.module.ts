@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { EditUserComponent } from 'app/components/users/pages/edit-user/edit-user.component';
 import { PerformanceUserComponent } from 'app/components/users/pages/performance-user/performance-user.component';
 import { DashboardComponent } from 'app/dashboard/dashboard.component';
 import { UserProfileComponent } from 'app/user-profile/user-profile.component';
@@ -42,6 +43,12 @@ const routes: Routes = [
   {
     path: 'performance',
     component: PerformanceUserComponent
+  },
+
+  // {{cargo}}/autogestion
+  {
+    path: 'autogestion',
+    component: EditUserComponent
   },
 
   // {{cargo}}/profile

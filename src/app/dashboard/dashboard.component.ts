@@ -16,6 +16,8 @@ import * as colombianHolidays from 'colombia-holidays';
 import { NotificationsService } from 'app/core/services/notifications/notifications.service';
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { UsersService } from 'app/components/users/services/users.service';
+import { User } from 'app/core/interfaces/User';
 
 export interface AuditorHours {
   auditor: string,
@@ -29,98 +31,6 @@ export interface PeriodicElement {
   symbol: string;
   description: string;
 }
-
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    position: 1,
-    name: 'Hydrogen',
-    weight: 1.0079,
-    symbol: 'H',
-    description: `Hydrogen is a chemical element with symbol H and atomic number 1. With a standard
-        atomic weight of 1.008, hydrogen is the lightest element on the periodic table.`,
-  },
-  {
-    position: 2,
-    name: 'Helium',
-    weight: 4.0026,
-    symbol: 'He',
-    description: `Helium is a chemical element with symbol He and atomic number 2. It is a
-        colorless, odorless, tasteless, non-toxic, inert, monatomic gas, the first in the noble gas
-        group in the periodic table. Its boiling point is the lowest among all the elements.`,
-  },
-  {
-    position: 3,
-    name: 'Lithium',
-    weight: 6.941,
-    symbol: 'Li',
-    description: `Lithium is a chemical element with symbol Li and atomic number 3. It is a soft,
-        silvery-white alkali metal. Under standard conditions, it is the lightest metal and the
-        lightest solid element.`,
-  },
-  {
-    position: 4,
-    name: 'Beryllium',
-    weight: 9.0122,
-    symbol: 'Be',
-    description: `Beryllium is a chemical element with symbol Be and atomic number 4. It is a
-        relatively rare element in the universe, usually occurring as a product of the spallation of
-        larger atomic nuclei that have collided with cosmic rays.`,
-  },
-  {
-    position: 5,
-    name: 'Boron',
-    weight: 10.811,
-    symbol: 'B',
-    description: `Boron is a chemical element with symbol B and atomic number 5. Produced entirely
-        by cosmic ray spallation and supernovae and not by stellar nucleosynthesis, it is a
-        low-abundance element in the Solar system and in the Earth's crust.`,
-  },
-  {
-    position: 6,
-    name: 'Carbon',
-    weight: 12.0107,
-    symbol: 'C',
-    description: `Carbon is a chemical element with symbol C and atomic number 6. It is nonmetallic
-        and tetravalent—making four electrons available to form covalent chemical bonds. It belongs
-        to group 14 of the periodic table.`,
-  },
-  {
-    position: 7,
-    name: 'Nitrogen',
-    weight: 14.0067,
-    symbol: 'N',
-    description: `Nitrogen is a chemical element with symbol N and atomic number 7. It was first
-        discovered and isolated by Scottish physician Daniel Rutherford in 1772.`,
-  },
-  {
-    position: 8,
-    name: 'Oxygen',
-    weight: 15.9994,
-    symbol: 'O',
-    description: `Oxygen is a chemical element with symbol O and atomic number 8. It is a member of
-         the chalcogen group on the periodic table, a highly reactive nonmetal, and an oxidizing
-         agent that readily forms oxides with most elements as well as with other compounds.`,
-  },
-  {
-    position: 9,
-    name: 'Fluorine',
-    weight: 18.9984,
-    symbol: 'F',
-    description: `Fluorine is a chemical element with symbol F and atomic number 9. It is the
-        lightest halogen and exists as a highly toxic pale yellow diatomic gas at standard
-        conditions.`,
-  },
-  {
-    position: 10,
-    name: 'Neon',
-    weight: 20.1797,
-    symbol: 'Ne',
-    description: `Neon is a chemical element with symbol Ne and atomic number 10. It is a noble gas.
-        Neon is a colorless, odorless, inert monatomic gas under standard conditions, with about
-        two-thirds the density of air.`,
-  },
-];
 
 
 @Component({
@@ -188,6 +98,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Tabla todos los usuarios
   dataAuditorHoras: any[] = [];
   usersNamesHours: string[] = [];
+  usersEmailHours: string[] = [];
   usersHours: number[] = [];
 
   // Tabla Sobrejecutado
@@ -243,6 +154,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   auditoriasVencidasArribaCien: number = 0;
   auditoriasVencidasEfectividad: number = 0;
 
+
+  // USERS para lo de el cruce de horas en 0
+  users_auditores: User[] = [];
+
   // Tabla de detalle HORAS
   displayedColumnsAuditorHours: string[] = ['auditor', 'hours'];
   dataSourceAuditorHours: MatTableDataSource<any>;
@@ -257,11 +172,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // displayedColumnAvanceActividades: string[] = ['country', 'activity', 'end-date', 'estimated-hours', 'worked-hours', 'avance', 'semaforo'];
   displayedColumnAvanceActividades: string[] = ['activity', 'end-date', 'estimated-hours', 'worked-hours', 'estado-open', 'avance', 'semaforo'];
   dataSourceAvanceActividades: MatTableDataSource<any>;
-
-
-  dataSource = ELEMENT_DATA;
-  columnsToDisplay = ['name', 'weight', 'symbol', 'position'];
-  expandedElement: any | null;
 
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -481,7 +391,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     ]
   };
 
-  constructor(private reportService: TimeReportService, private notificationService: NotificationsService) {
+  constructor(
+    private reportService: TimeReportService,
+    private usersService: UsersService,
+    private notificationService: NotificationsService
+  ) {
     this.dataSourceAuditorHours = new MatTableDataSource(this.dataAuditorHoras);
     this.dataSourceTopSobreEjecutados = new MatTableDataSource(this.dataAuditorHorasSobrejecutadas);
     this.dataSourceTopNoCompletados = new MatTableDataSource(this.dataAuditorHorasNoCompletado);
@@ -528,6 +442,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       end: moment(end).subtract(1, 'month').toDate()
     };
 
+    this.usersService.getAllUsers()
+      .subscribe(
+        (data) => this.users_auditores = data.users,
+        (error) => console.log('jodidos', error)
+      );
+
     // this.reportService.getAllTimeReportsDashboard(rangeTimeCurrentMonth)
     this.reportService.getAllTimeReportsDashboard()
       .subscribe((reports: ResponseTimeData) => {
@@ -538,44 +458,101 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         );
 
         // Si es el vicepresidente
-        if (this.userRole === 'VP_ROLE')
+        if (this.userRole === 'VP_ROLE') {
+
           reportes = reportes.filter((r) => r.user.role.code !== 'VP_ROLE');
+
+          this.users_auditores = this.users_auditores.filter((u) =>
+            u.role.code !== 'VP_ROLE' && u.role.code !== 'DIRECTOR_ROLE' && u.role.code !== 'LEADER_ROLE'
+          );
+
+        }
+
 
         // Si es gerente de CAM desde Colombia 
-        else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CAM')
+        else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CAM') {
+
           reportes = reportes.filter((r) => r.user.area.country.code !== 'CO' && r.user.role.code !== 'DIRECTOR_ROLE');
 
+          this.users_auditores = this.users_auditores.filter((u) => u.area.country.code !== 'CO' && u.role.code !== 'DIRECTOR_ROLE');
+
+        }
+
+
         // Si es director de Conductas especiales 
-        else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9')
+        else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9') {
+
           reportes = reportes.filter((r) => r.user.area.code === 9 && r.user.role.code !== 'DIRECTOR_ROLE');
 
+          this.users_auditores = this.users_auditores.filter((u) => u.area.code === 9 && u.role.code !== 'DIRECTOR_ROLE');
+
+        }
+
         // Si es director de Colombia
-        else if (this.userRole === 'DIRECTOR_ROLE')
-          reportes = reportes.filter((r) => r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'VP_ROLE' &&
-            r.user.role.code !== 'DIRECTOR_ROLE');
+        else if (this.userRole === 'DIRECTOR_ROLE') {
+
+          reportes = reportes.filter((r) =>
+            r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'VP_ROLE' &&
+            r.user.role.code !== 'DIRECTOR_ROLE'
+          );
+
+          this.users_auditores = this.users_auditores.filter((u) =>
+            u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'VP_ROLE' &&
+            u.role.code !== 'DIRECTOR_ROLE'
+          );
+
+        }
 
         // Si es Apoyo de Dirección
-        else if (this.userRole === 'APOYO_DIRECCION_ROLE')
+        else if (this.userRole === 'APOYO_DIRECCION_ROLE') {
+
           reportes = reportes.filter((r) => r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'APOYO_DIRECCION_ROLE');
 
+          this.users_auditores = this.users_auditores.filter((u) => u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'APOYO_DIRECCION_ROLE');
+
+        }
+
+
         // Si es Apoyo de VP
-        else if (this.userRole === 'APOYO_VP_ROLE')
+        else if (this.userRole === 'APOYO_VP_ROLE') {
+
           reportes = reportes.filter((r) => r.user.role.code !== 'VP_ROLE');
 
-        // Jefe Nelson Gamba
+          this.users_auditores = this.users_auditores.filter((u) =>
+            u.role.code !== 'VP_ROLE' && u.role.code !== 'DIRECTOR_ROLE' && u.role.code !== 'LEADER_ROLE'
+          );
+
+        }
+
+        // Jefe Operativa y Surcursales + Continua
         else if (this.userRole === 'LEADER_ROLE' && this.userArea === '2') {
           let tempUsersData = reportes.filter((r) => r.user.area.code.toString() === this.userArea && r.user.role.code !== this.userRole);
           let tempUsersData2 = reportes.filter((r) => r.user.area.code === 3);
           reportes = tempUsersData.concat(tempUsersData2);
+
+          let temp_users_auditores = this.users_auditores.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+          let temp_users_auditores_2 = this.users_auditores.filter((u) => u.area.code === 3);
+
+          this.users_auditores = temp_users_auditores.concat(temp_users_auditores_2);
+
         }
 
         // Si es jefe de Colombia
-        else if (this.userRole === 'LEADER_ROLE')
+        else if (this.userRole === 'LEADER_ROLE') {
+
           reportes = reportes.filter((r) => r.user.area.code.toString() === this.userArea && r.user.role.code !== this.userRole);
+          this.users_auditores = this.users_auditores.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+
+        }
 
         // Si es jefe de CAM
-        else if (this.userRole === 'LEADER_CAM_ROLE')
+        else if (this.userRole === 'LEADER_CAM_ROLE') {
+
           reportes = reportes.filter((r) => r.user.area.code.toString() === this.userArea && r.user.role.code !== this.userRole);
+
+          this.users_auditores = this.users_auditores.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+
+        }
 
         // Si es supervisor con equipo fijo
         else if (this.userRole === 'SUPERVISOR_ROLE') {
@@ -583,11 +560,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             r.user.area.code.toString() === this.userArea && r.user.role.code !== 'LEADER_ROLE' && r.user.role.code !== 'SUPERVISOR_ROLE' &&
             r.user.role.code !== 'LEADER_CAM_ROLE' && r.user.role.code !== 'VP_ROLE'
           );
+
+          this.users_auditores = this.users_auditores.filter((u) =>
+
+            u.area.code.toString() === this.userArea && u.role.code !== 'LEADER_ROLE' && u.role.code !== 'SUPERVISOR_ROLE' &&
+            u.role.code !== 'LEADER_CAM_ROLE' && u.role.code !== 'VP_ROLE'
+          );
+
         }
 
-        else
+        else {
+
           this.notificationService.showNotificationError('No es posible filtrar a los usuarios');
 
+        }
 
 
         // All retrive data
@@ -998,29 +984,56 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   }
 
-  private fillAuditorHoursTable(reports: TimeData[]) {
+  // Horas trabajadas por usuario
+  // TODO: VER AQUí
+  private fillAuditorHoursTable(reports: TimeData[], area?: string) {
+
+    // Cómo llamar a todos los auditores del área
 
     this.dataAuditorHoras = [];
     this.usersNamesHours = [];
+    this.usersEmailHours = [];
     this.usersHours = [];
 
     reports.forEach((report: TimeData) => {
 
       if (report.state) {
 
-        if (!this.usersNamesHours.includes(report.user.email)) {
-          this.usersNamesHours.push(report.user.email);
+        if (!this.usersNamesHours.includes(report.user.name)) {
+          this.usersNamesHours.push(report.user.name);
           this.usersHours.push(report.hours);
         } else {
-          let user = this.usersNamesHours.indexOf(report.user.email);
+          let user = this.usersNamesHours.indexOf(report.user.name);
           this.usersHours[user] += report.hours;
         }
       }
     });
 
+
     for (let i = 0; i < this.usersNamesHours.length; i++) {
       this.dataAuditorHoras.push({ name: this.usersNamesHours[i], hours: this.usersHours[i] });
     }
+
+    this.users_auditores.forEach((user: User) => {
+
+
+      if (area !== null && area !== undefined && area !== '' && area.length !== 0) {
+
+        if (user.state && area === user.area.name) {
+          if (!this.usersNamesHours.includes(user.name)) {
+            this.dataAuditorHoras.push({ name: user.name, hours: 0 })
+          }
+        }
+
+      } else {
+        if (user.state) {
+          if (!this.usersNamesHours.includes(user.name)) {
+            this.dataAuditorHoras.push({ name: user.name, hours: 0 })
+          }
+        }
+      }
+
+    });
 
     this.dataSourceAuditorHours.data = this.dataAuditorHoras.sort((a, b) => b.hours - a.hours);
 
@@ -1381,7 +1394,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
 
     this.dataSourceAuditorHours.data = [];
-    this.fillAuditorHoursTable(this.filtereMonthData);
+    this.fillAuditorHoursTable(this.filtereMonthData, event.value);
 
     this.fillAuditorHoursTableSobreEjecutados(this.filtereMonthData);
 
@@ -1424,8 +1437,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.dataLineChartPresupuestado = [];
     this.generateLineChart(this.filtereMonthData, this.lineChartData, this.labelsLineChart, this.dataLineChart);
 
-    this.dataSourceAuditorHours.data = [];
-    this.fillAuditorHoursTable(this.filtereMonthData);
+    // this.dataSourceAuditorHours.data = [];
+    // this.fillAuditorHoursTable(this.filtereMonthData);
 
     this.fillDetailTable(this.filtereMonthData);
     // this.fillDetailTable(reportes);
@@ -1559,6 +1572,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         end: moment(endMoment).subtract(1, 'month').toDate()
       };
 
+
+      this.usersService.getAllUsers()
+        .subscribe(
+          (data) => this.users_auditores = data.users,
+          (error) => console.log('jodidos filtered data by date', error)
+        );
+
       this.reportService.getAllTimeReportsDashboard()
         .subscribe((reports: ResponseTimeData) => {
 
@@ -1568,38 +1588,103 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             new Date(a.date).getTime() - new Date(b.date).getTime()
           );
 
-
           // Si es el vicepresidente
-          if (this.userRole === 'VP_ROLE')
+          if (this.userRole === 'VP_ROLE') {
+
             reportes = reportes.filter((r) => r.user.role.code !== 'VP_ROLE');
 
+
+            this.users_auditores = this.users_auditores.filter((u) =>
+              u.role.code !== 'VP_ROLE' && u.role.code !== 'DIRECTOR_ROLE' && u.role.code !== 'LEADER_ROLE'
+            );
+
+          }
+
+
           // Si es gerente de CAM desde Colombia 
-          else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CAM')
+          else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CAM') {
+
             reportes = reportes.filter((r) => r.user.area.country.code !== 'CO' && r.user.role.code !== 'DIRECTOR_ROLE');
 
+            this.users_auditores = this.users_auditores.filter((u) => u.area.country.code !== 'CO' && u.role.code !== 'DIRECTOR_ROLE');
+
+          }
+
+
           // Si es director de Conductas especiales 
-          else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9')
+          else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9') {
+
             reportes = reportes.filter((r) => r.user.area.code === 9 && r.user.role.code !== 'DIRECTOR_ROLE');
 
-          // Si es director de Colombia
-          else if (this.userRole === 'DIRECTOR_ROLE')
-            reportes = reportes.filter((r) => r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'VP_ROLE' &&
-              r.user.role.code !== 'DIRECTOR_ROLE');
+            this.users_auditores = this.users_auditores.filter((u) => u.area.code === 9 && u.role.code !== 'DIRECTOR_ROLE');
 
-          // Jefe Nelson Gamba
+          }
+
+          // Si es director de Colombia
+          else if (this.userRole === 'DIRECTOR_ROLE') {
+
+            reportes = reportes.filter((r) =>
+              r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'VP_ROLE' &&
+              r.user.role.code !== 'DIRECTOR_ROLE'
+            );
+
+            this.users_auditores = this.users_auditores.filter((u) =>
+              u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'VP_ROLE' &&
+              u.role.code !== 'DIRECTOR_ROLE'
+            );
+
+          }
+
+          // Si es Apoyo de Dirección
+          else if (this.userRole === 'APOYO_DIRECCION_ROLE') {
+
+            reportes = reportes.filter((r) => r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'APOYO_DIRECCION_ROLE');
+
+            this.users_auditores = this.users_auditores.filter((u) => u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'APOYO_DIRECCION_ROLE');
+
+          }
+
+
+          // Si es Apoyo de VP
+          else if (this.userRole === 'APOYO_VP_ROLE') {
+
+            reportes = reportes.filter((r) => r.user.role.code !== 'VP_ROLE');
+
+            this.users_auditores = this.users_auditores.filter((u) =>
+              u.role.code !== 'VP_ROLE' && u.role.code !== 'DIRECTOR_ROLE' && u.role.code !== 'LEADER_ROLE'
+            );
+
+          }
+
+          // Jefe Operativa y Surcursales + Continua
           else if (this.userRole === 'LEADER_ROLE' && this.userArea === '2') {
             let tempUsersData = reportes.filter((r) => r.user.area.code.toString() === this.userArea && r.user.role.code !== this.userRole);
             let tempUsersData2 = reportes.filter((r) => r.user.area.code === 3);
             reportes = tempUsersData.concat(tempUsersData2);
+
+            let temp_users_auditores = this.users_auditores.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+            let temp_users_auditores_2 = this.users_auditores.filter((u) => u.area.code === 3);
+
+            this.users_auditores = temp_users_auditores.concat(temp_users_auditores_2);
+
           }
 
           // Si es jefe de Colombia
-          else if (this.userRole === 'LEADER_ROLE')
+          else if (this.userRole === 'LEADER_ROLE') {
+
             reportes = reportes.filter((r) => r.user.area.code.toString() === this.userArea && r.user.role.code !== this.userRole);
+            this.users_auditores = this.users_auditores.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+
+          }
 
           // Si es jefe de CAM
-          else if (this.userRole === 'LEADER_CAM_ROLE')
+          else if (this.userRole === 'LEADER_CAM_ROLE') {
+
             reportes = reportes.filter((r) => r.user.area.code.toString() === this.userArea && r.user.role.code !== this.userRole);
+
+            this.users_auditores = this.users_auditores.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+
+          }
 
           // Si es supervisor con equipo fijo
           else if (this.userRole === 'SUPERVISOR_ROLE') {
@@ -1607,10 +1692,21 @@ export class DashboardComponent implements OnInit, AfterViewInit {
               r.user.area.code.toString() === this.userArea && r.user.role.code !== 'LEADER_ROLE' && r.user.role.code !== 'SUPERVISOR_ROLE' &&
               r.user.role.code !== 'LEADER_CAM_ROLE' && r.user.role.code !== 'VP_ROLE'
             );
+
+            this.users_auditores = this.users_auditores.filter((u) =>
+
+              u.area.code.toString() === this.userArea && u.role.code !== 'LEADER_ROLE' && u.role.code !== 'SUPERVISOR_ROLE' &&
+              u.role.code !== 'LEADER_CAM_ROLE' && u.role.code !== 'VP_ROLE'
+            );
+
           }
 
-          else
+          else {
+
             this.notificationService.showNotificationError('No es posible filtrar a los usuarios');
+
+          }
+
 
 
           this.currentMonthData = [];
@@ -1699,6 +1795,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       start: moment(start).subtract(1, 'month').toDate(),
       end: moment(end).subtract(1, 'month').toDate()
     };
+    this.usersService.getAllUsers()
+      .subscribe(
+        (data) => this.users_auditores = data.users,
+        (error) => console.log('jodidos reset', error)
+      );
 
     // this.reportService.getAllTimeReportsDashboard(rangeTime)
     this.reportService.getAllTimeReportsDashboard()
@@ -1709,38 +1810,103 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           new Date(a.date).getTime() - new Date(b.date).getTime()
         );
 
-
         // Si es el vicepresidente
-        if (this.userRole === 'VP_ROLE')
+        if (this.userRole === 'VP_ROLE') {
+
           reportes = reportes.filter((r) => r.user.role.code !== 'VP_ROLE');
 
+
+          this.users_auditores = this.users_auditores.filter((u) =>
+            u.role.code !== 'VP_ROLE' && u.role.code !== 'DIRECTOR_ROLE' && u.role.code !== 'LEADER_ROLE'
+          );
+
+        }
+
+
         // Si es gerente de CAM desde Colombia 
-        else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CAM')
+        else if (this.userRole === 'DIRECTOR_ROLE' && this.userCountry === 'CAM') {
+
           reportes = reportes.filter((r) => r.user.area.country.code !== 'CO' && r.user.role.code !== 'DIRECTOR_ROLE');
 
+          this.users_auditores = this.users_auditores.filter((u) => u.area.country.code !== 'CO' && u.role.code !== 'DIRECTOR_ROLE');
+
+        }
+
+
         // Si es director de Conductas especiales 
-        else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9')
+        else if (this.userRole === 'DIRECTOR_ROLE' && this.userArea === '9') {
+
           reportes = reportes.filter((r) => r.user.area.code === 9 && r.user.role.code !== 'DIRECTOR_ROLE');
 
-        // Si es director de Colombia
-        else if (this.userRole === 'DIRECTOR_ROLE')
-          reportes = reportes.filter((r) => r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'VP_ROLE' &&
-            r.user.role.code !== 'DIRECTOR_ROLE');
+          this.users_auditores = this.users_auditores.filter((u) => u.area.code === 9 && u.role.code !== 'DIRECTOR_ROLE');
 
-        // Jefe Nelson Gamba
+        }
+
+        // Si es director de Colombia
+        else if (this.userRole === 'DIRECTOR_ROLE') {
+
+          reportes = reportes.filter((r) =>
+            r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'VP_ROLE' &&
+            r.user.role.code !== 'DIRECTOR_ROLE'
+          );
+
+          this.users_auditores = this.users_auditores.filter((u) =>
+            u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'VP_ROLE' &&
+            u.role.code !== 'DIRECTOR_ROLE'
+          );
+
+        }
+
+        // Si es Apoyo de Dirección
+        else if (this.userRole === 'APOYO_DIRECCION_ROLE') {
+
+          reportes = reportes.filter((r) => r.user.area.country.code === 'CO' && r.user.area.code !== 9 && r.user.role.code !== 'APOYO_DIRECCION_ROLE');
+
+          this.users_auditores = this.users_auditores.filter((u) => u.area.country.code === 'CO' && u.area.code !== 9 && u.role.code !== 'APOYO_DIRECCION_ROLE');
+
+        }
+
+
+        // Si es Apoyo de VP
+        else if (this.userRole === 'APOYO_VP_ROLE') {
+
+          reportes = reportes.filter((r) => r.user.role.code !== 'VP_ROLE');
+
+          this.users_auditores = this.users_auditores.filter((u) =>
+            u.role.code !== 'VP_ROLE' && u.role.code !== 'DIRECTOR_ROLE' && u.role.code !== 'LEADER_ROLE'
+          );
+
+        }
+
+        // Jefe Operativa y Surcursales + Continua
         else if (this.userRole === 'LEADER_ROLE' && this.userArea === '2') {
           let tempUsersData = reportes.filter((r) => r.user.area.code.toString() === this.userArea && r.user.role.code !== this.userRole);
           let tempUsersData2 = reportes.filter((r) => r.user.area.code === 3);
           reportes = tempUsersData.concat(tempUsersData2);
+
+          let temp_users_auditores = this.users_auditores.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+          let temp_users_auditores_2 = this.users_auditores.filter((u) => u.area.code === 3);
+
+          this.users_auditores = temp_users_auditores.concat(temp_users_auditores_2);
+
         }
 
         // Si es jefe de Colombia
-        else if (this.userRole === 'LEADER_ROLE')
+        else if (this.userRole === 'LEADER_ROLE') {
+
           reportes = reportes.filter((r) => r.user.area.code.toString() === this.userArea && r.user.role.code !== this.userRole);
+          this.users_auditores = this.users_auditores.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+
+        }
 
         // Si es jefe de CAM
-        else if (this.userRole === 'LEADER_CAM_ROLE')
+        else if (this.userRole === 'LEADER_CAM_ROLE') {
+
           reportes = reportes.filter((r) => r.user.area.code.toString() === this.userArea && r.user.role.code !== this.userRole);
+
+          this.users_auditores = this.users_auditores.filter((u) => u.area.code.toString() === this.userArea && u.role.code !== this.userRole);
+
+        }
 
         // Si es supervisor con equipo fijo
         else if (this.userRole === 'SUPERVISOR_ROLE') {
@@ -1748,10 +1914,21 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             r.user.area.code.toString() === this.userArea && r.user.role.code !== 'LEADER_ROLE' && r.user.role.code !== 'SUPERVISOR_ROLE' &&
             r.user.role.code !== 'LEADER_CAM_ROLE' && r.user.role.code !== 'VP_ROLE'
           );
+
+          this.users_auditores = this.users_auditores.filter((u) =>
+
+            u.area.code.toString() === this.userArea && u.role.code !== 'LEADER_ROLE' && u.role.code !== 'SUPERVISOR_ROLE' &&
+            u.role.code !== 'LEADER_CAM_ROLE' && u.role.code !== 'VP_ROLE'
+          );
+
         }
 
-        else
+        else {
+
           this.notificationService.showNotificationError('No es posible filtrar a los usuarios');
+
+        }
+
 
 
         // Current month

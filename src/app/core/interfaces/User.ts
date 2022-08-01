@@ -8,6 +8,7 @@ export interface User {
     img: string;
     role: Role;
     area: Area;
+    state?: boolean;
     // Para los que son supervisados
     supervised_by?: ''
 }

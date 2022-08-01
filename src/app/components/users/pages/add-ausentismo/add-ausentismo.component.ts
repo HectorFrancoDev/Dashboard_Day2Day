@@ -80,7 +80,7 @@ export class AddAusentismoComponent implements OnInit {
 
       },
 
-      (error) => console.log(error)
+      (error) => console.log('PAILA', error)
     );
   }
 
