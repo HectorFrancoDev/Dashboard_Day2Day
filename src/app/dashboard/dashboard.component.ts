@@ -1142,13 +1142,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.closedActivitiesNames.push(cerradasEsteMes[i].name);
       this.closedActivitiesEstimatedHours.push(cerradasEsteMes[i].estimated_hours);
       this.closedActivitiesWorkedHours.push(cerradasEsteMes[i].worked_hours);
+
+      if (!cerradasEsteMes[i].open_state)
+        this.auditoriasVencidasRangoFecha += 1;
+
+      if (cerradasEsteMes[i].open_state)
+        this.auditoriasVencidasEfectividad += 1;
+
     }
 
-    this.auditoriasVencidasRangoFecha = cerradasEsteMes.length;
+
     this.auditoriasVencidasMenosCien = cerradasEsteMes.filter((a) => a.worked_hours < a.estimated_hours).length;
     this.auditoriasVencidasArribaCien = cerradasEsteMes.filter((a) => a.worked_hours >= a.estimated_hours).length;
-    // this.auditoriasVencidasEfectividad = (this.auditoriasVencidasArribaCien / this.auditoriasVencidasRangoFecha) * 100;
-    this.auditoriasVencidasEfectividad = (this.auditoriasVencidasArribaCien / this.auditoriasVencidasRangoFecha) * 100;
+
 
 
     this.barChartDataAuditoriaCerradasMes.labels = this.closedActivitiesNames;
@@ -1175,7 +1181,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         estimated_hours: activity.estimated_hours,
         worked_hours: activity.worked_hours,
         avance_actividades: (activity.worked_hours / activity.estimated_hours) * 100,
-        open_state: activity.open_state ? 'Abierto' : 'Cerrados',
+        open_state: activity.open_state ? 'Abierta' : 'Cerrada',
         semaforo:
           (activity.worked_hours / activity.estimated_hours) >= 1 ? 'red' :
             (activity.worked_hours / activity.estimated_hours) <= 1 ? 'yellow' : 'green'
