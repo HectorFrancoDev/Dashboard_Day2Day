@@ -4,7 +4,22 @@
     <div mat-dialog-content>
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-6">
+
+                <!-- Categoria / Entidad Auditable -->
+                <mat-form-field appearance="fill" class="inputs" *ngIf="is_new_report">
+                    <mat-label>Seleccionar categoría o entidad auditable</mat-label>
+                    <mat-select (selectionChange)="selecActivity($event.value)">
+                        <mat-option>Seleccionar</mat-option>
+                        <mat-option *ngFor="let category of categories" [value]="category">
+                            {{category}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+
+            <div class="col-6" id="activity_input">
 
                 <!-- Actividad -->
                 <mat-form-field appearance="fill" class="inputs">
@@ -13,7 +28,7 @@
                         <mat-option *ngFor="let activity of activities_2" [value]="activity.id"
                             style="font-size: 10px;">
 
-                            {{activity.name}}
+                            {{activity.codigo_open}} - {{activity.name}}
 
                         </mat-option>
                     </mat-select>

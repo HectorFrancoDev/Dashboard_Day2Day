@@ -115,7 +115,6 @@ export class GoogleLoginComponent implements OnInit {
     this.authService.loginWithGoogle(data).subscribe(
       (res) => {
 
-
         console.log(res);
 
         // Si es un administrador lo mando a la ruta /vicepresident

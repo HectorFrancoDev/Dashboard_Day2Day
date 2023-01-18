@@ -47,40 +47,8 @@ export class AddAusentismoComponent implements OnInit {
 
     this.userTimeReportService.getAllActivitiesFromUser().subscribe(
 
-      (activities) => {
-
-        this.activities = activities.activities.filter((a) => a.category.code === 1);
-
-        for (let i = 0; i < this.activities.length; i++) {
-
-          if (this.activities[i].is_general && this.activities[i].category !== undefined) {
-
-            this.activities_2.push({
-              id: this.activities[i].id,
-              name: this.activities[i].category.name + ' - ' + this.activities[i].name,
-            });
-
-          }
-          else if (!this.activities[i].is_general && this.activities[i].category !== undefined) {
-            this.activities_2.push({
-              id: this.activities[i].id,
-              name: this.activities[i].category.name + ' - ' + this.activities[i].name,
-            });
-
-          }
-
-          else {
-
-            this.activities_2.push({
-              id: this.activities[i].id,
-              name: this.activities[i].company.name + ' - ' + this.activities[i].name,
-            });
-          }
-        }
-
-      },
-
-      (error) => console.log('PAILA', error)
+      (activities) => this.activities = activities.activities.filter((activity) => activity.category.code === 1),
+      (error) => console.error(error)
     );
   }
 

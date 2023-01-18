@@ -205,7 +205,7 @@ export class ResumeTimeReportComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(AddReportComponent, {
-      width: '80%',
+      width: '75%',
       data: this.data
     });
 
