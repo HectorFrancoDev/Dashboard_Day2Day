@@ -4,6 +4,7 @@ import { Category } from "./Category";
 import { Company } from "./Company";
 
 export interface Activity {
+    _id?: string;
     id?: string;
     company: Company
     name: string;

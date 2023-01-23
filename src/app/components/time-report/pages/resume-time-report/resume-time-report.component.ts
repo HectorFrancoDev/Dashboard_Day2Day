@@ -75,7 +75,7 @@ export class ResumeTimeReportComponent implements OnInit {
         }
       }
     },
-
+    position_user: 0,
     detail: '',
     hours: 0,
     current_hours: 0,
@@ -194,6 +194,9 @@ export class ResumeTimeReportComponent implements OnInit {
     if (timeData) {
       this.data = timeData;
       this.data.current_hours = timeData.hours;
+      this.data.position_user = 0;
+      this.data.old_activity = this.data.activity._id;
+      this.data.position_user_old_activity = 0;
     }
     if (editar) {
       this.data.edit = true;
@@ -221,80 +224,34 @@ export class ResumeTimeReportComponent implements OnInit {
             return;
           }
 
-          this.userTimeReportService.getActivityById(result.activity).subscribe(
+          // Si se desea agregar uno nuevo
+          if (!timeData) {
 
-            (activity: ResponseActivity) => {
+            this.userTimeReportService.createTimeData(result).subscribe(
+              () => {
+                this.notificationService.showNotificationSuccess('Registro creado correctamente!');
+                this.resetData();
+                this.loadData();
+              },
+              (error) => this.notificationService.showNotificationError('No fue posible crear el registro, revisa los datos ingresados'),
+            );
 
-              // Si se desea agregar uno nuevo
-              if (!timeData) {
+          }
 
-                if (activity.activity.name.includes('Célula -')) {
+          // Se desea editar un registro
+          else {
 
-                  // HACER LO DE CÉLULAS
-                  this.userTimeReportService.createTimeDataCelulas(result).subscribe(
-                    () => {
-                      this.notificationService.showNotificationSuccess('Registro creado correctamente!');
-                      this.resetData();
-                      this.loadData();
-                    },
-                    (error) => this.notificationService.showNotificationError('No fue posible crear el registro, revisa los datos ingresados')
-                  );
-
-                } else {
-
-                  // HACER LO DE UNA ACTIVIDAD NORMAL
-                  this.userTimeReportService.createTimeData(result).subscribe(
-                    () => {
-                      this.notificationService.showNotificationSuccess('Registro creado correctamente!');
-                      this.resetData();
-                      this.loadData();
-                    },
-                    (error) => this.notificationService.showNotificationError('No fue posible crear el registro, revisa los datos ingresados'),
-                  );
-
-                }
-
+            this.userTimeReportService.editTimeData(timeData).subscribe(
+              () => {
+                this.notificationService.showNotificationSuccess('Registro editado correctamente!');
+                this.resetData();
+                this.loadData();
+              },
+              () => {
+                this.notificationService.showNotificationError('No fue posible editar el resgistro!');
               }
-
-              // Se desea editar un registro
-              else {
-
-                if (activity.activity.name.includes('Célula -')) {
-
-                  this.userTimeReportService.editTimeDataCelulas(timeData).subscribe(
-
-                    () => {
-                      this.notificationService.showNotificationSuccess('Registro editado correctamente!');
-                      this.resetData();
-                      this.loadData();
-                    },
-                    () => {
-                      this.notificationService.showNotificationError('No fue posible editar el resgistro!');
-                    }
-                  );
-
-
-                } else {
-
-                  this.userTimeReportService.editTimeData(timeData).subscribe(
-                    () => {
-                      this.notificationService.showNotificationSuccess('Registro editado correctamente!');
-                      this.resetData();
-                      this.loadData();
-                    },
-                    () => {
-                      this.notificationService.showNotificationError('No fue posible editar el resgistro!');
-                    }
-                  );
-
-                }
-
-              }
-
-            },
-
-            (error) => this.notificationService.showNotificationError('No fue posible crear el registro, revisa los datos ingresados')
-          );
+            );
+          }
 
         }
 
@@ -317,30 +274,14 @@ export class ResumeTimeReportComponent implements OnInit {
       const { id } = timeData;
       if (id) {
 
-        if (timeData.activity.name.includes('Célula -')) {
-
-          this.userTimeReportService.deleteTimeDataCelulas(id).subscribe(
-            () => {
-              this.notificationService.showNotificationSuccess('Registro eliminado correctamente!');
-              this.loadData();
-            },
-            () =>
-              this.notificationService.showNotificationError('No fue posible eliminar el registro')
-          );
-
-        } else {
-
-          this.userTimeReportService.deleteTimeData(id).subscribe(
-            () => {
-              this.notificationService.showNotificationSuccess('Registro eliminado correctamente!');
-              this.loadData();
-            },
-            () =>
-              this.notificationService.showNotificationError('No fue posible eliminar el registro')
-          );
-
-        }
-
+        this.userTimeReportService.deleteTimeData(id).subscribe(
+          () => {
+            this.notificationService.showNotificationSuccess('Registro eliminado correctamente!');
+            this.loadData();
+          },
+          () =>
+            this.notificationService.showNotificationError('No fue posible eliminar el registro')
+        );
       }
     }
   }

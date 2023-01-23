@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TokenService } from 'app/auth/services/token/token.service';
 import { Activity } from 'app/core/interfaces/Activity';
 import { TimeData } from 'app/core/interfaces/TimeData';
 import { TimeReportService } from '../../services/time-report/time-report.service';
@@ -26,8 +27,11 @@ export class AddReportComponent implements OnInit {
 
   public is_new_report = true;
 
+  public id_user = '';
+
 
   constructor(
+    private tokenService: TokenService,
     public dialogRef: MatDialogRef<AddReportComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TimeData,
 
@@ -38,6 +42,7 @@ export class AddReportComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.id_user = this.tokenService.getLocalStorage().idUser;
     this.loadData();
   }
 
@@ -49,6 +54,10 @@ export class AddReportComponent implements OnInit {
       (activities) => {
 
         this.activities = activities.activities.sort((a, b) => Number(a.is_general) - Number(b.is_general));
+
+        // Obtener posisción de la axctividad antigua en caso de que se edite el registro
+        if (this.data.edit)
+          this.getUserPositionOldActivity(this.data.old_activity);
 
         // Editar actividades / misiones
         if (this.data.edit) {
@@ -94,165 +103,30 @@ export class AddReportComponent implements OnInit {
   }
 
 
-  // loadData_3() {
+  selectUserPosition(activity_id = '') {
 
-  //   this.userTimeReportService.getAllActivitiesFromUserSpecific().subscribe(
+    let activity = null;
 
-  //     (activities) => {
+    for (let i = 0; i < this.activities.length; i++)
+      if (this.activities[i].id == activity_id)
+        activity = this.activities[i];
 
-  //       if (this.data.edit) {
+    this.data.position_user = activity.users.findIndex((u: any) => u.user == this.id_user);
 
-  //         this.is_new_report = false;
-
-  //         $("#activity_input").removeClass("col-6").addClass("col-12");
-
-  //         this.activities = activities.activities.filter((a) => a.name == this.data.activity.name);
-
-  //         for (let i = 0; i < this.activities.length; i++) {
-
-  //           if (this.activities[i].is_general && this.activities[i].category !== undefined) {
-
-  //             this.activities_2.push({
-  //               id: this.activities[i].id,
-  //               name: this.activities[i].name,
-  //             });
-
-  //           }
-  //           else if (!this.activities[i].is_general && this.activities[i].category !== undefined) {
-
-  //             this.activities_2.push({
-  //               id: this.activities[i].id,
-  //               name: this.activities[i].name,
-  //             });
-
-  //           }
-
-  //           else {
-
-  //             this.activities_2.push({
-  //               id: this.activities[i].id,
-  //               name: this.activities[i].name,
-  //             });
-  //           }
-  //         }
+  }
 
 
-  //       } else {
+  getUserPositionOldActivity(activity_id = '') {
 
-  //         this.activities = activities.activities.sort((a, b) => Number(a.is_general) - Number(b.is_general));
+    let activity = null;
 
+    for (let i = 0; i < this.activities.length; i++)
+      if (this.activities[i].id == activity_id)
+        activity = this.activities[i];
 
-  //         for (let i = 0; i < this.activities.length; i++) {
+    this.data.position_user_old_activity = activity.users.findIndex((u: any) => u.user == this.id_user);
 
-  //           if (!this.categories.includes(this.activities[i].company.name) && this.activities[i].company.name !== 'Otros Conceptos - General')
-  //             this.categories.push(this.activities[i].company.name);
-
-  //         }
-
-  //         for (let i = 0; i < this.activities.length; i++) {
-
-  //           if (this.activities[i].is_general && this.activities[i].category !== undefined)
-
-  //             if (!this.categories.includes(this.activities[i].category.name))
-  //               this.categories.push(this.activities[i].category.name);
-
-  //           if (!this.activities[i].is_general && this.activities[i].category !== undefined)
-  //             if (!this.categories.includes(this.activities[i].category.name))
-  //               this.categories.push(this.activities[i].category.name);
-
-  //         }
-
-  //       }
-
-  //     }, (error) => console.log(error)
-  //   );
-
-  // }
-
-
-  // loadData_2() {
-
-  //   this.userTimeReportService.getAllActivitiesFromUserSpecific().subscribe(
-
-  //     (activities) => {
-
-  //       if (this.data.edit) {
-
-  //         this.activities = activities.activities.filter((a) => a.name == this.data.activity.name);
-
-  //         for (let i = 0; i < this.activities.length; i++) {
-
-  //           if (this.activities[i].is_general && this.activities[i].category !== undefined) {
-
-  //             this.activities_2.push({
-  //               id: this.activities[i].id,
-  //               // name: this.activities[i].category.name + ' - ' + this.activities[i].name,
-  //               name: this.activities[i].category.name,
-  //             });
-
-  //           }
-  //           else if (!this.activities[i].is_general && this.activities[i].category !== undefined) {
-
-  //             this.activities_2.push({
-  //               id: this.activities[i].id,
-  //               // name: this.activities[i].category.name + ' - ' + this.activities[i].name,
-  //               name: this.activities[i].category.name,
-  //             });
-
-  //           }
-
-  //           else {
-
-  //             this.activities_2.push({
-  //               id: this.activities[i].id,
-  //               // name: this.activities[i].company.name + ' - ' + this.activities[i].name,
-  //               name: this.activities[i].company.name,
-  //             });
-  //           }
-  //         }
-  //       }
-
-  //       else {
-
-  //         this.activities = activities.activities.sort((a, b) => Number(a.is_general) - Number(b.is_general));
-
-  //         for (let i = 0; i < this.activities.length; i++) {
-
-  //           if (this.activities[i].is_general && this.activities[i].category !== undefined) {
-
-  //             this.activities_2.push({
-  //               id: this.activities[i].id,
-  //               // name: this.activities[i].category.name + ' - ' + this.activities[i].name,
-  //               name: this.activities[i].category.name,
-  //             });
-
-  //           }
-  //           else if (!this.activities[i].is_general && this.activities[i].category !== undefined) {
-
-  //             this.activities_2.push({
-  //               id: this.activities[i].id,
-  //               // name: this.activities[i].category.name + ' - ' + this.activities[i].name,
-  //               name: this.activities[i].category.name,
-  //             });
-
-  //           }
-
-  //           else {
-
-  //             this.activities_2.push({
-  //               id: this.activities[i].id,
-  //               // name: this.activities[i].company.name + ' - ' + this.activities[i].name,
-  //               name: this.activities[i].company.name,
-  //             });
-  //           }
-  //         }
-
-  //       }
-
-  //     },
-  //     (error) => console.log(error)
-  //   );
-  // }
+  }
 
   onNoClick(): void {
     this.dialogRef.close();

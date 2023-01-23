@@ -7,12 +7,14 @@ export interface TimeData {
     id?: string;
     date: Date;
     activity: Activity;
+    old_activity?: string;
+    position_user_old_activity?: number;
     detail: string;
     hours: number;
     current_hours: number;
     edit: Boolean;
     user: User;
-  
+    position_user?: number,
     titleDialog?: string
     checked?: boolean;
   }
