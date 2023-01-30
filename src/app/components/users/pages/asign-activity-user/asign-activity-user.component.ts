@@ -95,7 +95,7 @@ export class AsignActivityUserComponent implements OnInit {
   loadData() {
     this.activityService.getActivities(true).subscribe(
       (activities) => {
-        this.activities = activities.activities.filter(a => a.company.country.code === this.user.area.country.code);
+        this.activities = activities.activities.filter(a => a.state && a.company.country.code === this.user.area.country.code);
       },
       (error) => console.error(error)
     );

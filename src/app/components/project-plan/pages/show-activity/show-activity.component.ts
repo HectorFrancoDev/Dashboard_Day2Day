@@ -25,6 +25,7 @@ import { EditAuditorActivityComponent } from '../edit-auditor-activity/edit-audi
 export class ShowActivityComponent implements OnInit, AfterViewInit {
 
   public activity: Activity = {
+    codigo_open: '',
     id: '',
     name: '',
     open_state: true,

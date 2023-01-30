@@ -27,7 +27,7 @@
                         <mat-list-option *ngFor="let activity of activities; let index = index"
                             [selected]="verifyUser(index)" [disabled]="activity.is_general"
                             (click)="assignActivity(activity)" style="font-size: 12px;">
-                            {{activity.company.name}} - {{activity.name}}
+                            {{activity.codigo_open}} - {{activity.name}}
                         </mat-list-option>
                     </mat-selection-list>
                 </mat-expansion-panel>

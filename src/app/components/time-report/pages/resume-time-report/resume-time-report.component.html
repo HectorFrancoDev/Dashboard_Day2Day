@@ -118,7 +118,7 @@
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Actividad </th>
                                 <td mat-cell *matCellDef="let row" #tooltip="matTooltip" matTooltipPosition="right"
                                     matTooltipHideDelay="1000" [matTooltip]="row.activity.name">
-                                    {{row.activity.name | slice:0:30}}
+                                    {{row.activity.codigo_open }} - {{row.activity.name | slice:0:30}}
                                 </td>
                             </ng-container>
 

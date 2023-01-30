@@ -35,7 +35,7 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
   public poseePermisos: boolean = false;
   public puedeEditar: boolean = false;
 
-  displayedColumns: string[] = ['image-avatar', 'email', 'name', 'country', 'role', 'actions', 'actions-2', 'actions-3'];
+  displayedColumns: string[] = ['image-avatar', 'email', 'name', 'country', 'role', 'state', 'actions', 'actions-2', 'actions-3'];
   dataSource: MatTableDataSource<GeneralUser>;
   private usersData: GeneralUser[] = [];
 
@@ -125,7 +125,8 @@ export class ListUsersComponent implements OnInit, AfterViewInit {
         else
           this.notificationService.showNotificationError('No es posible filtrar a los usuarios');
 
-        this.dataSource.data = this.usersData;
+        console.log(this.usersData);
+        this.dataSource.data = this.usersData.sort((a, b ) => a.area.code - b.area.code).sort((a, b) => Number(b.state) - Number(a.state)) ;
       },
       (error) => {
         this.notificationService.showNotificationError("Error obteniendo usuarios de la BD");

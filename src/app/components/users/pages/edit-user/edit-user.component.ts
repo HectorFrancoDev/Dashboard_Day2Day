@@ -39,7 +39,7 @@ export class EditUserComponent implements OnInit {
 
   userImg = 'assets/img/user_img.png';
 
-  private data = {}
+  private data: any = {}
 
   constructor(
     private userService: UsersService,
@@ -65,6 +65,8 @@ export class EditUserComponent implements OnInit {
     else {
       this.router.navigate(['/']);
     }
+
+    this.data.user = this.idUser;
 
   }
 
@@ -92,9 +94,14 @@ export class EditUserComponent implements OnInit {
         // setear el id del usuario a result.user
         result.user = this.idUser ;
 
+        // console.log(result);
+
         this.userService.createAusentismos(result).subscribe(
           (data) => { this.notificationService.showNotificationSuccess('Ausentismo creado correctamente!'); },
-          (error) => { this.notificationService.showNotificationError('Hubo un error interno, por favor comuniquese con el administrador'); }
+          (error) => { 
+            console.log(error);
+            this.notificationService.showNotificationError('ERROR: ' + error.error.error); 
+          }
         );
 
       }

@@ -35,7 +35,7 @@ export class AddAusentismoComponent implements OnInit {
 
     private userTimeReportService: TimeReportService
   ) {
-    this.titulo = this.data.titleDialog || 'Agregar Registro';
+    this.titulo = this.data.titleDialog || 'Agregar ausentismo';
     this.minDate.setFullYear(this.currentYear, this.currentMonth, 1);
   }
 
@@ -47,7 +47,9 @@ export class AddAusentismoComponent implements OnInit {
 
     this.userTimeReportService.getAllActivitiesFromUser().subscribe(
 
-      (activities) => this.activities = activities.activities.filter((activity) => activity.category.code === 1),
+      (activities) => {
+        this.activities = activities.activities.filter((activity) => activity.category.code === 1);
+      },
       (error) => console.error(error)
     );
   }
@@ -57,8 +59,18 @@ export class AddAusentismoComponent implements OnInit {
 
   }
 
-  filterReport() {
-    console.log('HOLA')
+
+  selectUserPosition(activity_id = '') {
+
+    let activity = null;
+
+    for (let i = 0; i < this.activities.length; i++)
+      if (this.activities[i].id == activity_id)
+        activity = this.activities[i];
+
+    this.data.position_user = activity.users.findIndex((u: any) => u.user == this.data.user);
+
   }
+
 
 }

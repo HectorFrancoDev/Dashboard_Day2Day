@@ -13,7 +13,7 @@
             <mat-divider></mat-divider>
 
             <div class="row">
-                <div class="col-lg-6 col-md-12 col-sm-6">
+                <div class="col-lg-6 col-md-12 col-sm-6" *ngIf="user.state">
                     <button mat-raised-button color="primary" class="btn btn-round btn-large btn-success"
                     (click)="openDialog()" >
                         Agregar ausentismo

@@ -152,6 +152,8 @@ export class ResumeTimeReportComponent implements OnInit {
       (responseTimeData) => {
         this.timeData = responseTimeData.reports;
 
+        console.log('155', this.timeData);
+
         this.dataSource.data = this.timeData;
 
         let cDate = moment(new Date()).format('YYYY-MM-DD');

@@ -4,6 +4,7 @@ import { Category } from "./Category";
 import { Company } from "./Company";
 
 export interface Activity {
+    codigo_open?: string;
     _id?: string;
     id?: string;
     company: Company
