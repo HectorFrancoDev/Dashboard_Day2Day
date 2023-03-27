@@ -11,20 +11,26 @@ const routes: Routes = [
   // {{cargo}}/dashboard
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'time-report',
     pathMatch: 'full'
   },
 
   // {{cargo}}/dashboard
-  {
-    path: 'dashboard',
-    component: DashboardComponent
-  },
+  // {
+  //   path: 'dashboard',
+  //   component: DashboardComponent
+  // },
 
   // {{cargo}}/users
   {
     path: 'users',
     loadChildren: () => import('./users/users.module').then(m => m.UsersModule)
+  },
+
+  // {{cargo}}/users-cell
+  {
+    path: 'users-cell',
+    loadChildren: () => import('./users-cell/users-cell.module').then(m => m.UsersCellModule)
   },
 
   // {{cargo}}/project-plan

@@ -34,6 +34,7 @@ export class TempLoginComponent implements OnInit {
       this.authService.getUserLogged().subscribe(
         (res) => {
 
+
           // Si es un administrador lo mando a la ruta /vicepresident
           try {
 
@@ -43,6 +44,11 @@ export class TempLoginComponent implements OnInit {
 
             else {
 
+              let celulasTemp = '';
+              res.user.celulas.forEach(celula => {
+                celulasTemp += celula.celula.name + ','
+              });
+
               // Guardar en el localstorage
               this.tokenService.setToken(
                 token,
@@ -51,7 +57,8 @@ export class TempLoginComponent implements OnInit {
                 res.user.role.code,
                 res.user.area.code,
                 res.user.id,
-                res.user.role.name
+                res.user.role.name,
+                celulasTemp
               );
 
               if (res.user.role.code === 'VP_ROLE')
@@ -113,6 +120,11 @@ export class TempLoginComponent implements OnInit {
           }
 
           else {
+            
+            let celulasTemp = '';
+            res.user.celulas.forEach(celula => {
+              celulasTemp += celula.celula.name + ','
+            });
 
             // Guardar en el localstorage
             this.tokenService.setToken(
@@ -122,7 +134,8 @@ export class TempLoginComponent implements OnInit {
               res.user.role.code,
               res.user.area.code,
               res.user.id,
-              res.user.role.name
+              res.user.role.name,
+              celulasTemp
             );
 
             if (res.user.role.code === 'VP_ROLE')

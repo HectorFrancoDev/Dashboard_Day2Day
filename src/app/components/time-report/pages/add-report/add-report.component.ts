@@ -53,7 +53,7 @@ export class AddReportComponent implements OnInit {
 
       (activities) => {
 
-        this.activities = activities.activities.sort((a, b) => Number(a.is_general) - Number(b.is_general));
+        this.activities = activities.activities.sort((a, b) => a.codigo_open.localeCompare(b.codigo_open));
 
         // Obtener posisción de la axctividad antigua en caso de que se edite el registro
         if (this.data.edit)

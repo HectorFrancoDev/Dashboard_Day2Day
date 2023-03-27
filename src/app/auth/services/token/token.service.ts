@@ -14,7 +14,7 @@ export class TokenService {
     return token !== null ? token : '';
   }
 
-  setToken(token: string, name: string, country: string, role: string, area: number, id: string, roleName: string) {
+  setToken(token: string, name: string, country: string, role: string, area: number, id: string, roleName: string, celulas: string) {
     localStorage.setItem('x-token', token);
     localStorage.setItem('user-name', name);
     localStorage.setItem('country', country);
@@ -22,6 +22,7 @@ export class TokenService {
     localStorage.setItem('area', area + '');
     localStorage.setItem('idUser', id);
     localStorage.setItem('role-name', roleName);
+    localStorage.setItem('celulas', celulas);
   }
 
   getLocalStorage() {
@@ -32,7 +33,8 @@ export class TokenService {
       'role': localStorage.getItem('role'),
       'area': localStorage.getItem('area'),
       'idUser': localStorage.getItem('idUser'),
-      'role-name': localStorage.getItem('role-name')
+      'role-name': localStorage.getItem('role-name'),
+      'celulas': localStorage.getItem('celulas')
     }
   }
 

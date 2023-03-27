@@ -16,22 +16,23 @@ declare interface RouteInfo {
 export const ROUTES: RouteInfo[] = [
 
   // Rotas qué tiene el Vicepresidente 
-  { role: 'VP_ROLE', path: '/vicepresident/dashboard', title: 'Resumen General', icon: 'insights' },
+  // { role: 'VP_ROLE', path: '/vicepresident/dashboard', title: 'Resumen General', icon: 'insights' },
   { role: 'VP_ROLE', path: '/vicepresident/project-plan', title: 'Project Plan', icon: 'dashboard' },
   { role: 'VP_ROLE', path: '/vicepresident/users', title: 'Equipo de trabajo', icon: 'people_alt' },
 
   // Rotas qué tienen los  Directores
-  { role: 'DIRECTOR_ROLE', path: '/director/dashboard', title: 'Resumen General', icon: 'insights' },
+  // { role: 'DIRECTOR_ROLE', path: '/director/dashboard', title: 'Resumen General', icon: 'insights' },
   { role: 'DIRECTOR_ROLE', path: '/director/project-plan', title: 'Project Plan', icon: 'dashboard' },
   { role: 'DIRECTOR_ROLE', path: '/director/users', title: 'Equipo de trabajo', icon: 'people_alt' },
 
   // Rotas qué tiene los Líderes (jefes) Colombia
-  { role: 'LEADER_ROLE', path: '/leader/dashboard', title: 'Resumen General', icon: 'insights' },
+  // { role: 'LEADER_ROLE', path: '/leader/dashboard', title: 'Resumen General', icon: 'insights' },
   { role: 'LEADER_ROLE', path: '/leader/project-plan', title: 'Project Plan', icon: 'dashboard' },
-  { role: 'LEADER_ROLE', path: '/leader/users', title: 'Equipo de trabajo', icon: 'people_alt' },
+  { role: 'LEADER_ROLE', path: '/leader/users', title: 'Equipo jefatura', icon: 'people_alt' },
+  { role: 'LEADER_ROLE', path: '/leader/users-cell', title: 'Equipo células', icon: 'people_alt' },
 
   // Rotas qué tiene los líderes de CAM (jefes)
-  { role: 'LEADER_CAM_ROLE', path: '/leader-cam/dashboard', title: 'Resumen General', icon: 'insights' },
+  // { role: 'LEADER_CAM_ROLE', path: '/leader-cam/dashboard', title: 'Resumen General', icon: 'insights' },
   { role: 'LEADER_CAM_ROLE', path: '/leader-cam/time-report', title: 'Agregar registro', icon: 'add_task' },
   { role: 'LEADER_CAM_ROLE', path: '/leader-cam/performance', title: 'Mi reporte', icon: 'bar_chart' },
   { role: 'LEADER_CAM_ROLE', path: '/leader-cam/project-plan', title: 'Project Plan', icon: 'dashboard' },
@@ -40,10 +41,11 @@ export const ROUTES: RouteInfo[] = [
   
 
   // Rotas qué tiene los supervisores
-  { role: 'SUPERVISOR_ROLE', path: '/supervisor/dashboard', title: 'Resumen General', icon: 'insights' },
+  // { role: 'SUPERVISOR_ROLE', path: '/supervisor/dashboard', title: 'Resumen General', icon: 'insights' },
   { role: 'SUPERVISOR_ROLE', path: '/supervisor/time-report', title: 'Agregar registro', icon: 'add_task' },
   { role: 'SUPERVISOR_ROLE', path: '/supervisor/performance', title: 'Mi reporte', icon: 'bar_chart' },
-  { role: 'SUPERVISOR_ROLE', path: '/supervisor/users', title: 'Equipo de trabajo', icon: 'people_alt' },
+  { role: 'SUPERVISOR_ROLE', path: '/supervisor/users', title: 'Equipo jefatura', icon: 'people_alt' },
+  { role: 'SUPERVISOR_ROLE', path: '/supervisor/users-cell', title: 'Equipo células', icon: 'people_alt' },
   { role: 'SUPERVISOR_ROLE', path: '/supervisor/autogestion', title: 'Ausencias', icon: 'beach_access' },
 
   // Rotas qué tiene los auditores
@@ -52,7 +54,7 @@ export const ROUTES: RouteInfo[] = [
   { role: 'AUDITOR_ROLE', path: '/auditor/autogestion', title: 'Ausencias', icon: 'beach_access' },
 
   // Rotas qué tiene el Apoyo de Dirección
-  { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/dashboard', title: 'Resumen General', icon: 'insights' },
+  // { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/dashboard', title: 'Resumen General', icon: 'insights' },
   { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/time-report', title: 'Agregar registro', icon: 'add_task' },
   { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/performance', title: 'Mi reporte', icon: 'bar_chart' },
   { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/project-plan', title: 'Project Plan', icon: 'dashboard' },
@@ -60,7 +62,7 @@ export const ROUTES: RouteInfo[] = [
   { role: 'APOYO_DIRECCION_ROLE', path: '/apoyo-direccion/autogestion', title: 'Ausencias', icon: 'beach_access' },
 
   // Rotas qué tiene el Apoyo de Dirección
-  { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/dashboard', title: 'Resumen General', icon: 'insights' },
+  // { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/dashboard', title: 'Resumen General', icon: 'insights' },
   { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/time-report', title: 'Agregar registro', icon: 'add_task' },
   { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/performance', title: 'Mi reporte', icon: 'bar_chart' },
   { role: 'APOYO_VP_ROLE', path: '/apoyo-vp/project-plan', title: 'Project Plan', icon: 'dashboard' },

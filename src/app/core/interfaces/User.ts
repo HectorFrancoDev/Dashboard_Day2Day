@@ -2,6 +2,7 @@ import { Area } from "./Area";
 import { Role } from "./Role";
 
 export interface User {
+    celulas?: any;
     id: string;
     name: string;
     email: string;

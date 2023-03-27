@@ -14,6 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentsModule } from '../components.module';
 import { EditUserComponent } from './pages/edit-user/edit-user.component';
 import { AddAusentismoComponent } from './pages/add-ausentismo/add-ausentismo.component';
+import { ListUsersCellsComponent } from './pages/list-users-cells/list-users-cells.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { AddAusentismoComponent } from './pages/add-ausentismo/add-ausentismo.co
     PerformanceUserComponent,
     CreateUserComponent,
     EditUserComponent,
-    AddAusentismoComponent
+    AddAusentismoComponent,
+    ListUsersCellsComponent
   ],
   imports: [
     CommonModule,

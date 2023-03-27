@@ -55,8 +55,8 @@ export class TimeReportService {
 
     }
 
-    return null
-    // return this.http.get<ResponseTimeData>(`${environment.API_URL}/reports/dashboard`, httpOptions);
+    // return null
+    return this.http.get<ResponseTimeData>(`${environment.API_URL}/reports/dashboard`, httpOptions);
   }
 
   /**
